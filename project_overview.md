@@ -15,8 +15,25 @@ Desenvolver uma API robusta e de alta performance com o tema **One Piece**. A ap
 - **ORM**: Sequelize (com `sequelize-typescript`)
 - **Banco de Dados**: PostgreSQL (Principal)
 - **Documentação**: Swagger / OpenAPI (Obrigatório)
-- **Arquitetura**: Vertical/Modular com padrão **CQRS** (Command Query Responsibility Segregation) em todos os CRUDs.
-- **Resiliência/Performance**: Foco em Cache, Filas e CQRS desde o início.
+- **Arquitetura**: Vertical/Modular com padrão **CQRS** (Command Query Responsibility Segregation).
+- **Padrão de Nomes**: Rico em semântica, separando claramente conceitos de Coleção (Plural) e Entidade/Payload (Singular).
+
+---
+
+## 📏 Padrão de Nomenclatura (Singular vs Plural)
+
+Para manter a consistência em +60 endpoints, adotamos o seguinte padrão rigoroso:
+
+| Categoria | Padrão | Exemplo | Motivo |
+|---|---|---|---|
+| **Módulo** | Plural | `UsersModule` | Contêiner de toda a funcionalidade. |
+| **Controller** | Plural | `UsersController` | Gerencia a coleção de recursos. |
+| **Service** | Plural | `UsersService` | Orquestra operações sobre o domínio. |
+| **Model** | Singular | `User` | Representa uma única linha no banco. |
+| **DTO** | Singular | `UserFilterDto` | Representa o conceito do payload/filtro. |
+| **Command** | Singular | `CreateUserCommand` | Uma ação específica (geralmente singular). |
+| **Query** | Plural/Sing. | `GetUsersQuery` | Plural se retornar lista, Singular se retornar um. |
+| **Arquivo** | kebab-case | `user-filter.dto.ts` | Segue o nome da classe. |
 
 ---
 
@@ -221,7 +238,7 @@ src/users/
 │       └── get-users.query.ts      ← payload da query tipado com DTO
 ├── dtos/
 │   ├── create-user.dto.ts          ← valida @Body() e documenta no Swagger
-│   └── users-filter.dto.ts         ← valida @Query() com filtros e paginação
+│   └── user-filter.dto.ts          ← valida @Query() com filtros e paginação
 ├── models/
 │   └── user.model.ts               ← entidade Sequelize (mapeamento da tabela)
 ├── users.controller.ts             ← recebe HTTP, delega ao Service
@@ -322,7 +339,7 @@ export class XxxFilterDto {
 }
 ```
 
-> **Referência real:** `src/users/dtos/create-user.dto.ts` e `src/users/dtos/users-filter.dto.ts`
+> **Referência real:** `src/users/dtos/create-user.dto.ts` e `src/users/dtos/user-filter.dto.ts`
 
 ---
 

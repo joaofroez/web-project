@@ -6,7 +6,10 @@ import { Op } from 'sequelize';
 
 @QueryHandler(GetUsersQuery)
 export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
-  constructor(@InjectModel(User) private userModel: typeof User) {}
+  constructor(
+    @InjectModel(User)
+    private readonly userModel: typeof User,
+  ) {}
 
   async execute(query: GetUsersQuery) {
     const { page = 1, limit = 10, username, email } = query.filters;

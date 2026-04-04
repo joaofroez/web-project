@@ -12,7 +12,7 @@ import {
 } from 'sequelize-typescript';
 import { Profile } from '../../profiles/models/profile.model';
 
-@Table({ tableName: 'Users' })
+@Table({ tableName: 'Users', timestamps: true, paranoid: true })
 export class User extends Model {
   @PrimaryKey @AutoIncrement @Column(DataType.INTEGER) id!: number;
 

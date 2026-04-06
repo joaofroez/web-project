@@ -3,11 +3,15 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { ProfilesModule } from './profiles/profiles.module';
+import { PermissionsModule } from './permissions/permissions.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     UsersModule,
     ProfilesModule,
+    PermissionsModule,
+    AuthModule,
 
     ConfigModule.forRoot({ isGlobal: true }),
     SequelizeModule.forRootAsync({

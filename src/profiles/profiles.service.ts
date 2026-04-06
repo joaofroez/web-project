@@ -8,6 +8,8 @@ import { GetProfileByIdQuery } from './queries/impl/get-profile-by-id.query';
 import { CreateProfileDto } from './dtos/create-profile.dto';
 import { ProfileFilterDto } from './dtos/profile-filter.dto';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
+import { UpdateProfilePermissionsDto } from './dtos/update-profile-permissions.dto';
+import { UpdateProfilePermissionsCommand } from './commands/impl/update-profile-permissions.command';
 
 @Injectable()
 export class ProfilesService {
@@ -18,6 +20,10 @@ export class ProfilesService {
 
   create(data: CreateProfileDto) {
     return this.commandBus.execute(new CreateProfileCommand(data));
+  }
+
+  updatePermissions(id: number, data: UpdateProfilePermissionsDto) {
+    return this.commandBus.execute(new UpdateProfilePermissionsCommand(id, data));
   }
 
   findAll(filters: ProfileFilterDto) {

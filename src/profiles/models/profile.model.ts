@@ -7,7 +7,10 @@ import {
   AutoIncrement,
   Unique,
   AllowNull,
+  BelongsToMany,
 } from 'sequelize-typescript';
+import { Permission } from '../../permissions/models/permission.model';
+import { ProfilePermission } from '../../permissions/models/profile-permission.model';
 
 @Table({ tableName: 'Profiles', timestamps: true, paranoid: true })
 export class Profile extends Model {
@@ -16,4 +19,7 @@ export class Profile extends Model {
   @Unique @AllowNull(false) @Column(DataType.STRING) name!: string;
 
   @AllowNull(true) @Column(DataType.STRING) description!: string;
+
+  @BelongsToMany(() => Permission, () => ProfilePermission)
+  permissions!: Permission[];
 }

@@ -57,6 +57,9 @@ Para garantir escalabilidade e aprendizado técnico, o projeto adotará **CQRS**
 
 ## 📊 Diagrama de Entidade-Relacionamento (ERD)
 
+> [!NOTE]
+> **Modelo de Auditoria e Soft Delete**: Para manter o diagrama visualmente limpo, as colunas de controle (`id`, `createdAt`, `updatedAt` e `deletedAt`) foram omitidas ou simplificadas. No entanto, todas as entidades principais do sistema implementam obrigatoriamente esse quarteto de campos para garantir rastreabilidade total e suporte ao **Soft Delete** nativo do Sequelize.
+
 ```mermaid
 erDiagram
     direction TB

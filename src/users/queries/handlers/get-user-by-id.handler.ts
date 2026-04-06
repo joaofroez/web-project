@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/sequelize';
 import { NotFoundException } from '@nestjs/common';
 import { GetUserByIdQuery } from '../impl/get-user-by-id.query';
 import { User } from '../../models/user.model';
+import { Profile } from '../../../profiles/models/profile.model';
+import { Permission } from '../../../permissions/models/permission.model';
 
 @QueryHandler(GetUserByIdQuery)
 export class GetUserByIdHandler implements IQueryHandler<GetUserByIdQuery> {
@@ -13,7 +15,12 @@ export class GetUserByIdHandler implements IQueryHandler<GetUserByIdQuery> {
 
   async execute(query: GetUserByIdQuery) {
     const user = await this.userModel.findByPk(query.id, {
-      include: ['profile'],
+      include: [
+        {
+          model: Profile,
+          include: [Permission],
+        },
+      ],
     });
 
     if (!user) {

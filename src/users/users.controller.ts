@@ -1,14 +1,18 @@
-import { Controller, Post, Get, Body, Query, Param, Patch, Delete, ParseIntPipe } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { Controller, Post, Get, Body, Query, Param, Patch, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@/common/guards/permissions.guard';
+import { RequirePermissions } from '@/common/decorators/require-permissions.decorator';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UserFilterDto } from './dtos/user-filter.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 
+@ApiBearerAuth('access-token')
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @ApiOperation({ summary: 'Criar um novo usuário' })
   @Post()
@@ -17,6 +21,8 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: 'Listar todos os usuários com filtros e paginação' })
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermissions('users.view')
   @Get()
   findAll(@Query() params: UserFilterDto) {
     return this.usersService.findAll(params);
@@ -35,6 +41,8 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: 'Remover um usuário (Soft Delete)' })
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermissions('users.delete')
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);

@@ -9,9 +9,11 @@ import { GetProfilesHandler } from './queries/handlers/get-profiles.handler';
 import { UpdateProfileHandler } from './commands/handlers/update-profile.handler';
 import { DeleteProfileHandler } from './commands/handlers/delete-profile.handler';
 import { GetProfileByIdHandler } from './queries/handlers/get-profile-by-id.handler';
+import { UpdateProfilePermissionsHandler } from './commands/handlers/update-profile-permissions.handler';
+import { ProfilePermission } from '@/permissions/models/profile-permission.model';
 
 @Module({
-  imports: [CqrsModule, SequelizeModule.forFeature([Profile])],
+  imports: [CqrsModule, SequelizeModule.forFeature([Profile, ProfilePermission])],
   controllers: [ProfilesController],
   providers: [
     ProfilesService,
@@ -20,7 +22,8 @@ import { GetProfileByIdHandler } from './queries/handlers/get-profile-by-id.hand
     UpdateProfileHandler,
     DeleteProfileHandler,
     GetProfileByIdHandler,
+    UpdateProfilePermissionsHandler,
   ],
-  exports: [SequelizeModule], // Exportamos para que outros módulos (como Users) possam usar o Profile model
+  exports: [SequelizeModule],
 })
 export class ProfilesModule {}

@@ -1,0 +1,25 @@
+'use strict';
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.addColumn('Users', 'deletedAt', {
+      type: Sequelize.DATE,
+      allowNull: true,
+    });
+    await queryInterface.addColumn('Profiles', 'deletedAt', {
+      type: Sequelize.DATE,
+      allowNull: true,
+    });
+    await queryInterface.addColumn('Permissions', 'deletedAt', {
+      type: Sequelize.DATE,
+      allowNull: true,
+    });
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.removeColumn('Users', 'deletedAt');
+    await queryInterface.removeColumn('Profiles', 'deletedAt');
+    await queryInterface.removeColumn('Permissions', 'deletedAt');
+  },
+};

@@ -1,98 +1,87 @@
+# 🏴‍☠️ Grand Line API
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" />
+  <br>
+  <strong>A API definitiva do universo One Piece</strong>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 🌊 Visão Geral
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+A **Grand Line API** é um poderoso ecossistema RESTful desenvolvido para gerenciar e fornecer dados estruturados sobre o vasto universo de One Piece. 
 
-## Description
+A API foi projetada para suportar sistemas complexos de:
+- 📖 **Enciclopédia de Dados**: Gestão cronológica de Sagas, Arcos, Personagens, Facções e Akuma no Mi.
+- 🗺️ **Cartografia Estruturada**: Dados detalhados de ilhas e regiões com coordenadas para mapeamento.
+- 🎮 **Lógica de Gamificação**: Sistema de exploração e Quizzes integrados por localidade.
+- 🛡️ **Segurança e Regras**: Controle de acesso baseado em perfis (RBAC) e uma **Política de Spoilers Dinâmica** que filtra dados conforme o progresso do usuário.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## 🛠️ Stack Tecnológica
 
+- **Backend**: [NestJS](https://nestjs.com/) (Arquitetura Modular)
+- **Linguagem**: [TypeScript](https://www.typescriptlang.org/)
+- **ORM**: [Sequelize-Typescript](https://github.com/sequelize/sequelize-typescript)
+- **Arquitetura**: **CQRS** (Command Query Responsibility Segregation) para separação clara entre leitura e escrita.
+- **Banco de Dados**: PostgreSQL & Redis (Cache e Filas).
+- **Mensageria**: BullMQ (Processamento assíncrono).
+
+---
+
+## 🚀 Começo Rápido
+
+### Pré-requisitos
+- Docker & Docker Compose
+- Node.js v20+
+
+### 1. Configurar o Ambiente
+Crie o arquivo `.env` na raiz (veja `.env.example`):
 ```bash
-$ npm install
+cp .env.example .env
 ```
 
-## Compile and run the project
-
+### 2. Subir a Infraestrutura
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker-compose up -d
 ```
 
-## Run tests
-
+### 3. Instalar Dependências
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### 4. Executar Migrations e Seeders
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npx sequelize-cli db:migrate
+npx sequelize-cli db:seed:all
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 5. Rodar a Aplicação
+```bash
+npm run start:dev
+```
 
-## Resources
+---
 
-Check out a few resources that may come in handy when working with NestJS:
+## 🗺️ Mapa da API (Domínios Principais)
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- **/auth**: Gestão de identidade e JWT.
+- **/profiles**: Controle granular de permissões (RBAC).
+- **/islands**: Dados cartográficos de regiões e ilhas.
+- **/sagas**: Estrutura cronológica (Sagas -> Arcos -> Personagens).
+- **/quizzes**: Lógica de progresso e exploração.
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 📜 Regras de Negócio
 
-## Stay in touch
+1. **Spoiler-Free**: Endpoints de listagem aplicam filtros automáticos baseados no `current_arc_id` do perfil.
+2. **Ciclo das Akuma no Mi**: Implementação de lógica para garantir a unicidade e ciclo de vida das frutas no sistema.
+3. **Exploração Dinâmica**: Status de exploração de ilhas vinculados ao desempenho em Quizzes.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+## 📄 Licença
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Este projeto está sob a licença UNLICENSED. Desenvolvido para fins de demonstração técnica e paixão pela obra de Eiichiro Oda.

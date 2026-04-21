@@ -159,10 +159,10 @@ erDiagram
     - [x] CRUD de `PROFILES` (Commands/Queries).
     - [x] CRUD de `PERMISSIONS` (Commands/Queries).
     - [x] Gerenciamento de `PROFILE_PERMISSIONS`.
-- [ ] **Autenticação**:
-    - [ ] Registro e Login de `USERS`.
-    - [ ] Implementação de **Guards** baseados em Roles e Permissions.
-    - [ ] Integração com JWT (ESM compatible).
+- [x] **Autenticação**:
+    - [x] Registro e Login de `USERS`.
+    - [x] Implementação de **Guards** baseados em Roles e Permissions.
+    - [x] Integração com JWT (ESM compatible).
 
 ### Fase 2: Núcleo Geográfico & Conteúdo
 - [ ] **CRUD de Regiões e Ilhas**: Listagem com filtros de clima e região.

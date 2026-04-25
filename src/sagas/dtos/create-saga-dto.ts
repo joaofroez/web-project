@@ -4,9 +4,9 @@ export class CreateSagaDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
-  name: string;
+  name!: string;
 
   @IsInt()
   @Min(1)
-  order: number;
+  order!: number;
 }

@@ -62,137 +62,91 @@ Para garantir escalabilidade e aprendizado técnico, o projeto adotará **CQRS**
 
 ```mermaid
 erDiagram
-    direction TB
-
-    %% 1. Núcleo de Acesso e Segurança (RBAC)
-    USERS {
+    users {
         int id PK
-        string username
-        string email
-        string password_hash
+        varchar username
+        varchar email
+        varchar password_hash
         int profile_id FK
-        int current_arc_id FK
         datetime created_at
     }
-
-    PROFILES {
+    profiles {
         int id PK
-        string name
-        string description
+        varchar name
+        varchar description
     }
-
-    PERMISSIONS {
+    permissions {
         int id PK
-        string name
-        string slug
+        varchar name
+        varchar slug
     }
-
-    PROFILE_PERMISSIONS {
+    profile_permissions {
         int profile_id FK
         int permission_id FK
     }
-
-    %% 2. Núcleo Geográfico (Mapa)
-    REGIONS {
+    sagas {
         int id PK
-        string name
-        string description
-        string climate
+        varchar name
+        int order
     }
-
-    ISLANDS {
+    arcs {
         int id PK
-        int region_id FK
-        string name
+        int saga_id FK
+        varchar name
+        text description
+        int order
+    }
+    islands {
+        int id PK
+        varchar name
+        text description
+        int arc_id FK
         float coordinate_x
         float coordinate_y
         float coordinate_z
-        string model_url
+        varchar model_url
+        varchar thumbnail_url
+        varchar background_image_url
         boolean is_active
     }
-
-    %% 3. Núcleo de Conteúdo (Enciclopédia)
-    SAGAS {
+    characters {
         int id PK
-        string name
+        varchar name
+        varchar epithet
+    }
+    character_versions {
+        int id PK
+        int character_id FK
+        int arc_id FK
+        bigint bounty
+        varchar status
+        varchar image_url
+        text description
+    }
+    island_character_versions {
+        int island_id FK
+        int character_version_id FK
+        int order
+    }
+    events {
+        int id PK
+        int island_id FK
+        varchar title
+        text description
+        varchar type
         int order
     }
 
-    ARCS {
-        int id PK
-        int saga_id FK
-        string name
-        int start_chapter
-        int end_chapter
-    }
-
-    CHARACTERS {
-        int id PK
-        string name
-        string epithet
-        bigint bounty
-        string status
-        int first_appearance_arc_id FK
-    }
-
-    AKUMA_NO_MI {
-        int id PK
-        string name
-        string type
-        int current_user_id FK
-    }
-
-    FACTIONS {
-        int id PK
-        string name
-        int leader_id FK
-        string alignment
-    }
-
-    %% 4. Núcleo de Interatividade
-    QUIZZES {
-        int id PK
-        int island_id FK
-        string title
-        int min_score_to_unlock
-    }
-
-    QUESTIONS {
-        int id PK
-        int quiz_id FK
-        string text
-        string difficulty
-    }
-
-    ANSWERS {
-        int id PK
-        int question_id FK
-        string text
-        boolean is_correct
-    }
-
-    USER_EXPLORATION {
-        int user_id FK
-        int island_id FK
-        string status
-        datetime unlocked_at
-    }
-
-    %% Relacionamentos
-    USERS ||--o{ USER_EXPLORATION : "tracks"
-    PROFILES ||--o{ USERS : "assigns"
-    PROFILES ||--o{ PROFILE_PERMISSIONS : "defines"
-    PERMISSIONS ||--o{ PROFILE_PERMISSIONS : "grants"
-    ARCS ||--o{ USERS : "filters_spoiler_by"
-    REGIONS ||--o{ ISLANDS : "contains"
-    ISLANDS ||--o{ USER_EXPLORATION : "recorded_in"
-    ISLANDS ||--o{ QUIZZES : "unlocks"
-    SAGAS ||--o{ ARCS : "contains"
-    ARCS ||--o{ CHARACTERS : "introduces"
-    CHARACTERS ||--o{ AKUMA_NO_MI : "consumes"
-    CHARACTERS ||--o| FACTIONS : "leads"
-    QUIZZES ||--o{ QUESTIONS : "contains"
-    QUESTIONS ||--o{ ANSWERS : "has"
+    users }o--|| profiles : "profile_id"
+    profiles ||--o{ profile_permissions : "profile_id"
+    permissions ||--o{ profile_permissions : "permission_id"
+    sagas ||--o{ arcs : "saga_id"
+    arcs ||--o{ islands : "arc_id"
+    characters ||--o{ character_versions : "character_id"
+    arcs ||--o{ character_versions : "arc_id"
+    islands ||--o{ island_character_versions : "island_id"
+    character_versions ||--o{ island_character_versions : "character_version_id"
+    islands ||--o{ events : "island_id"
 ```
 
 ---
@@ -200,15 +154,15 @@ erDiagram
 ## 🗺️ Roadmap Global (TODO List)
 
 ### Fase 1: Fundação & Segurança (Prioridade Alta)
-- [ ] **Configuração CQRS**: Setup do `@nestjs/cqrs` e organização da pasta `src/shared`.
-- [ ] **Módulo de RBAC (CQRS)**:
-    - [ ] CRUD de `PROFILES` (Commands/Queries).
-    - [ ] CRUD de `PERMISSIONS` (Commands/Queries).
-    - [ ] Gerenciamento de `PROFILE_PERMISSIONS`.
-- [ ] **Autenticação**:
-    - [ ] Registro e Login de `USERS`.
-    - [ ] Implementação de **Guards** baseados em Roles e Permissions.
-    - [ ] Integração com JWT (ESM compatible).
+- [x] **Configuração CQRS**: Setup do `@nestjs/cqrs` e organização da pasta `src/shared`.
+- [x] **Módulo de RBAC (CQRS)**:
+    - [x] CRUD de `PROFILES` (Commands/Queries).
+    - [x] CRUD de `PERMISSIONS` (Commands/Queries).
+    - [x] Gerenciamento de `PROFILE_PERMISSIONS`.
+- [x] **Autenticação**:
+    - [x] Registro e Login de `USERS`.
+    - [x] Implementação de **Guards** baseados em Roles e Permissions.
+    - [x] Integração com JWT (ESM compatible).
 
 ### Fase 2: Núcleo Geográfico & Conteúdo
 - [ ] **CRUD de Regiões e Ilhas**: Listagem com filtros de clima e região.

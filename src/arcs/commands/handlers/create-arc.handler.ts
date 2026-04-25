@@ -1,6 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
+import { Op } from 'sequelize';
 
 import { CreateArcCommand } from '../impl/create-arc.command';
 import { Arc } from 'src/arcs/models/arc.model';
@@ -19,32 +23,32 @@ export class CreateArcHandler implements ICommandHandler<CreateArcCommand> {
   async execute(command: CreateArcCommand): Promise<Arc> {
     const { name, description, saga_id, order } = command;
 
-    // REGRA 1 — Saga deve existir
+    // REGRA 1 — validar saga
     const saga = await this.sagaModel.findByPk(saga_id);
     if (!saga) {
       throw new NotFoundException('Saga não encontrada');
     }
 
-    // REGRA 2 — order deve ser único dentro da saga
-    const existingOrder = await this.arcModel.findOne({
-      where: { saga_id, order },
+    // REGRA 2 e 3 — validar duplicidade (order ou name)
+    const existing = await this.arcModel.findOne({
+      where: {
+        saga_id,
+        [Op.or]: [{ order }, { name }],
+      },
     });
 
-    if (existingOrder) {
-      throw new BadRequestException(
-        'Já existe um arco com essa ordem nessa saga',
-      );
-    }
+    if (existing) {
+      if (existing.order === order) {
+        throw new BadRequestException(
+          'Já existe um arco com essa ordem nessa saga',
+        );
+      }
 
-    // REGRA 3 — nome único dentro da saga
-    const existingName = await this.arcModel.findOne({
-      where: { saga_id, name },
-    });
-
-    if (existingName) {
-      throw new BadRequestException(
-        'Já existe um arco com esse nome nessa saga',
-      );
+      if (existing.name === name) {
+        throw new BadRequestException(
+          'Já existe um arco com esse nome nessa saga',
+        );
+      }
     }
 
     // criação

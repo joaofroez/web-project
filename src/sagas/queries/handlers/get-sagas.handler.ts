@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
 
-import { GetSagasQuery } from './get-sagas.query';
+import { GetSagasQuery } from '../impl/get-sagas.query';
 import { Saga } from 'src/sagas/models/saga.model';
 
 @QueryHandler(GetSagasQuery)

@@ -9,6 +9,7 @@ import { SagasController } from './sagas.controller';
 import { SagasService } from './sagas.service';
 
 import { GetSagasHandler } from './queries/handlers/get-sagas.handler';
+import { GetSagaByIdHandler } from './queries/handlers/get-saga-by-id.handler';
 
 // Commands
 import { CreateSagaHandler } from './commands/handlers/create-saga.handler';
@@ -21,7 +22,10 @@ const CommandHandlers = [
   DeleteSagaHandler,
 ];
 
-const QueryHandlers = [GetSagasHandler];
+const QueryHandlers = [
+  GetSagasHandler,
+  GetSagaByIdHandler,
+];
 
 @Module({
   imports: [

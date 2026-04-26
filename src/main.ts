@@ -23,7 +23,6 @@ async function bootstrap() {
     .setTitle('Grand Line API')
     .setDescription('Documentação da API')
     .setVersion('1.0')
-    .addTag('Base')
     .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'access-token')
     .build();
 

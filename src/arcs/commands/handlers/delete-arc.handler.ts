@@ -7,7 +7,7 @@ import {
 
 import { DeleteArcCommand } from '../impl/delete-arc.command';
 import { Arc } from 'src/arcs/models/arc.model';
-import { Island } from 'src/islands/models/island.model';
+// import { Island } from 'src/islands/models/island.model';
 
 @CommandHandler(DeleteArcCommand)
 export class DeleteArcHandler implements ICommandHandler<DeleteArcCommand> {
@@ -15,8 +15,8 @@ export class DeleteArcHandler implements ICommandHandler<DeleteArcCommand> {
     @InjectModel(Arc)
     private readonly arcModel: typeof Arc,
 
-    @InjectModel(Island)
-    private readonly islandModel: typeof Island,
+    // @InjectModel(Island)
+    // private readonly islandModel: typeof Island,
   ) {}
 
   async execute(command: DeleteArcCommand): Promise<void> {
@@ -29,15 +29,15 @@ export class DeleteArcHandler implements ICommandHandler<DeleteArcCommand> {
     }
 
     // REGRA 2 — Não pode deletar se tiver ilhas vinculadas
-    const hasIslands = await this.islandModel.findOne({
-      where: { arc_id: id },
-    });
+    // const hasIslands = await this.islandModel.findOne({
+    //   where: { arc_id: id },
+    // });
 
-    if (hasIslands) {
-      throw new BadRequestException(
-        'Não é possível deletar um arco que possui ilhas vinculadas',
-      );
-    }
+    // if (hasIslands) {
+    //   throw new BadRequestException(
+    //     'Não é possível deletar um arco que possui ilhas vinculadas',
+    //   );
+    // }
 
     // delete
     await arc.destroy();

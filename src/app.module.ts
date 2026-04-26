@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { CharactersModule } from './characters/characters.module';
 import { CharacterVersionsModule } from './character-versions/character-versions.module';
 import { IslandCharacterVersionsModule } from './island-character-versions/island-character-versions.module';
+import { ArcsModule } from './arcs/arcs.module';
+import { SagasModule } from './sagas/sagas.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { IslandCharacterVersionsModule } from './island-character-versions/islan
     CharactersModule,
     CharacterVersionsModule,
     IslandCharacterVersionsModule,
+    ArcsModule,
+    SagasModule,
 
     ConfigModule.forRoot({ isGlobal: true }),
     SequelizeModule.forRootAsync({

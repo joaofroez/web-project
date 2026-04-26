@@ -9,6 +9,12 @@ export class IslandCharacterFilterDto {
   @IsInt()
   island_id?: number;
 
+  @ApiPropertyOptional({ example: 1, description: 'ID da Versão do Personagem' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  character_version_id?: number;
+
   @ApiPropertyOptional({ example: 1, default: 1, description: 'Página atual' })
   @IsOptional()
   @Type(() => Number)

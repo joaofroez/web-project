@@ -29,7 +29,7 @@ export class SagasService {
   // READ ALL (com paginação)
   async findAll(query: FilterSagaDto) {
     return this.queryBus.execute(
-      new GetSagasQuery(query.page, query.limit),
+      new GetSagasQuery(query.page, query.limit, query.name, query.order),
     );
   }
 

@@ -5,6 +5,7 @@ import { GetProfilesQuery } from './queries/impl/get-profiles.query';
 import { UpdateProfileCommand } from './commands/impl/update-profile.command';
 import { DeleteProfileCommand } from './commands/impl/delete-profile.command';
 import { GetProfileByIdQuery } from './queries/impl/get-profile-by-id.query';
+import { GetProfilePermissionsQuery } from './queries/impl/get-profile-permissions.query';
 import { CreateProfileDto } from './dtos/create-profile.dto';
 import { ProfileFilterDto } from './dtos/profile-filter.dto';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
@@ -32,6 +33,10 @@ export class ProfilesService {
 
   findOne(id: number) {
     return this.queryBus.execute(new GetProfileByIdQuery(id));
+  }
+
+  getPermissions(id: number) {
+    return this.queryBus.execute(new GetProfilePermissionsQuery(id));
   }
 
   update(id: number, data: UpdateProfileDto) {

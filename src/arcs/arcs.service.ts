@@ -32,7 +32,7 @@ export class ArcsService {
 
   findAll(query: FilterArcDto) {
     return this.queryBus.execute(
-      new GetArcsQuery(query.page, query.limit, query.saga_id),
+      new GetArcsQuery(query.page, query.limit, query.saga_id, query.name),
     );
   }
 

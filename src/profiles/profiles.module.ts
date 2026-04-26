@@ -10,6 +10,7 @@ import { UpdateProfileHandler } from './commands/handlers/update-profile.handler
 import { DeleteProfileHandler } from './commands/handlers/delete-profile.handler';
 import { GetProfileByIdHandler } from './queries/handlers/get-profile-by-id.handler';
 import { UpdateProfilePermissionsHandler } from './commands/handlers/update-profile-permissions.handler';
+import { GetProfilePermissionsHandler } from './queries/handlers/get-profile-permissions.handler';
 import { ProfilePermission } from '@/permissions/models/profile-permission.model';
 
 @Module({
@@ -23,6 +24,7 @@ import { ProfilePermission } from '@/permissions/models/profile-permission.model
     DeleteProfileHandler,
     GetProfileByIdHandler,
     UpdateProfilePermissionsHandler,
+    GetProfilePermissionsHandler,
   ],
   exports: [SequelizeModule],
 })

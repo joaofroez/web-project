@@ -13,11 +13,12 @@ export class GetCharactersByIslandHandler implements IQueryHandler<GetCharacters
   ) {}
 
   async execute(query: GetCharactersByIslandQuery) {
-    const { page = 1, limit = 10, island_id } = query.filters;
+    const { page = 1, limit = 10, island_id, character_version_id } = query.filters;
     const offset = (page - 1) * limit;
 
     const where: any = {};
     if (island_id) where.island_id = island_id;
+    if (character_version_id) where.character_version_id = character_version_id;
 
     return this.pivotModel.findAndCountAll({
       where,

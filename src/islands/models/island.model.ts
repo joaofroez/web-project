@@ -13,7 +13,7 @@ import { Arc } from 'src/arcs/models/arc.model';
 import { CharacterVersion } from 'src/character-versions/models/character-version.model';
 import { IslandCharacterVersion } from 'src/island-character-versions/models/island-character-version.model';
 import { HasMany } from 'sequelize-typescript';
-import { Event } from './event.model';
+import { Event } from 'src/events/models/event.model';
 
 interface IslandAttributes {
   id: number;

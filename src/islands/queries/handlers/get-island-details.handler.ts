@@ -8,7 +8,7 @@ import { Island } from '../../models/island.model';
 import { Arc } from 'src/arcs/models/arc.model';
 import { CharacterVersion } from 'src/character-versions/models/character-version.model';
 import { Character } from 'src/characters/models/character.model';
-import { Event } from 'src/islands/models/event.model';
+import { Event } from 'src/events/models/event.model';
 
 @QueryHandler(GetIslandDetailsQuery)
 export class GetIslandDetailsHandler

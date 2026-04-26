@@ -6,7 +6,6 @@ import { IslandsController } from './islands.controller';
 import { IslandsService } from './islands.service';
 
 import { Island } from './models/island.model';
-import { Event } from './models/event.model';
 
 import { Arc } from 'src/arcs/models/arc.model';
 import { CharacterVersion } from 'src/character-versions/models/character-version.model';
@@ -36,7 +35,6 @@ const QueryHandlers = [
     CqrsModule,
     SequelizeModule.forFeature([
       Island,
-      Event,
       Arc,
       CharacterVersion,
       Character,

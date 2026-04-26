@@ -10,6 +10,7 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 import { Character } from '../../characters/models/character.model';
+import { Arc } from '../../arcs/models/arc.model';
 
 @Table({ tableName: 'CharacterVersions', timestamps: true, paranoid: true })
 export class CharacterVersion extends Model {
@@ -23,10 +24,13 @@ export class CharacterVersion extends Model {
   @BelongsTo(() => Character)
   character!: Character;
 
-  // Soft Link para Arc
+  @ForeignKey(() => Arc)
   @AllowNull(false)
   @Column(DataType.INTEGER)
   arc_id!: number;
+
+  @BelongsTo(() => Arc)
+  arc!: Arc;
 
   @AllowNull(true) @Column(DataType.STRING) alias!: string;
 

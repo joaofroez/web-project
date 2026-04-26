@@ -10,6 +10,8 @@ import { CharacterVersionsModule } from './character-versions/character-versions
 import { IslandCharacterVersionsModule } from './island-character-versions/island-character-versions.module';
 import { ArcsModule } from './arcs/arcs.module';
 import { SagasModule } from './sagas/sagas.module';
+import { IslandsModule } from './islands/islands.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { SagasModule } from './sagas/sagas.module';
     IslandCharacterVersionsModule,
     ArcsModule,
     SagasModule,
+    IslandsModule,
+    EventsModule,
 
     ConfigModule.forRoot({ isGlobal: true }),
     SequelizeModule.forRootAsync({

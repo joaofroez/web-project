@@ -12,7 +12,14 @@ import {
 } from 'sequelize-typescript';
 import { Profile } from '../../profiles/models/profile.model';
 
-@Table({ tableName: 'Users', timestamps: true, paranoid: true })
+@Table({
+  tableName: 'Users',
+  timestamps: true,
+  paranoid: true,
+  defaultScope: {
+    attributes: { exclude: ['password_hash'] }
+  }
+})
 export class User extends Model {
   @PrimaryKey @AutoIncrement @Column(DataType.INTEGER) id!: number;
 

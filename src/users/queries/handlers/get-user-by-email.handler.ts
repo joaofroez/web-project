@@ -11,7 +11,7 @@ export class GetUserByEmailHandler implements IQueryHandler<GetUserByEmailQuery>
   ) { }
 
   async execute(query: GetUserByEmailQuery) {
-    return this.userModel.findOne({
+    return this.userModel.unscoped().findOne({
       where: { email: query.email },
       include: { all: true } // carrega o perfil ao login ser efetuado
     });

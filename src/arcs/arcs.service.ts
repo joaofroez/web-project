@@ -6,6 +6,7 @@ import { UpdateArcDto } from './dtos/update-arcs-dto';
 import { FilterArcDto } from './dtos/filter-arcs-dto';
 
 import { CreateArcCommand } from './commands/impl/create-arc.command';
+import { CreateArcsBulkCommand } from './commands/impl/create-arcs-bulk.command';
 import { UpdateArcCommand } from './commands/impl/update-arc.command';
 import { DeleteArcCommand } from './commands/impl/delete-arc.command';
 
@@ -27,6 +28,12 @@ export class ArcsService {
         dto.saga_id,
         dto.order,
       ),
+    );
+  }
+
+  createBulk(dtos: CreateArcDto[]) {
+    return this.commandBus.execute(
+      new CreateArcsBulkCommand(dtos),
     );
   }
 

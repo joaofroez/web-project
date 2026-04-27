@@ -10,7 +10,7 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
 import { RequirePermissions } from '../common/decorators/require-permissions.decorator';
@@ -37,6 +37,15 @@ export class IslandsController {
   @Post()
   create(@Body() dto: CreateIslandDto) {
     return this.islandsService.create(dto);
+  }
+
+  @ApiOperation({ summary: 'Criar múltiplas ilhas em lote' })
+  @ApiBody({ type: [CreateIslandDto] })
+  @ApiResponse({ status: 201, description: 'Ilhas criadas com sucesso.' })
+  @RequirePermissions('islands.create')
+  @Post('bulk')
+  createBulk(@Body() dtos: CreateIslandDto[]) {
+    return this.islandsService.createBulk(dtos);
   }
 
   @ApiOperation({ summary: 'Listar ilhas com filtros e paginação' })

@@ -6,6 +6,7 @@ import { UpdateIslandDto } from './dtos/update-island.dto';
 import { FilterIslandDto } from './dtos/filter-island.dto';
 
 import { CreateIslandCommand } from './commands/impl/create-island.command';
+import { CreateIslandsBulkCommand } from './commands/impl/create-islands-bulk.command';
 import { UpdateIslandCommand } from './commands/impl/update-island.command';
 import { DeleteIslandCommand } from './commands/impl/delete-island.command';
 
@@ -25,7 +26,7 @@ export class IslandsService {
       new CreateIslandCommand(
         dto.name,
         dto.description,
-        dto.arc_id,
+        dto.arc_ids,
         dto.coordinate_x,
         dto.coordinate_y,
         dto.coordinate_z,
@@ -33,6 +34,13 @@ export class IslandsService {
         dto.thumbnail_url,
         dto.is_active,
       ),
+    );
+  }
+
+  // BULK CREATE
+  async createBulk(dtos: CreateIslandDto[]) {
+    return this.commandBus.execute(
+      new CreateIslandsBulkCommand(dtos),
     );
   }
 
@@ -62,7 +70,7 @@ export class IslandsService {
         id,
         dto.name,
         dto.description,
-        dto.arc_id,
+        dto.arc_ids,
         dto.coordinate_x,
         dto.coordinate_y,
         dto.coordinate_z,

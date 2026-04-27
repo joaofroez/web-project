@@ -8,10 +8,10 @@ export class CreateCharacterVersionDto {
   @IsNotEmpty()
   character_id!: number;
 
-  @ApiProperty({ example: 1, description: 'ID do arco (Soft Link)' })
-  @IsInt()
+  @ApiProperty({ example: [1, 2], description: 'IDs dos arcos onde esta versão é válida', isArray: true })
+  @IsInt({ each: true })
   @IsNotEmpty()
-  arc_id!: number;
+  arc_ids!: number[];
 
   @ApiPropertyOptional({ example: 'Sogeking', description: 'Nome utilizado no contexto' })
   @IsOptional()

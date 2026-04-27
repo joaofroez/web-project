@@ -8,9 +8,11 @@ import {
   AllowNull,
   ForeignKey,
   BelongsTo,
+  BelongsToMany,
 } from 'sequelize-typescript';
 import { Character } from '../../characters/models/character.model';
 import { Arc } from '../../arcs/models/arc.model';
+import { ArcCharacterVersion } from '../../arcs/models/arc-character-version.model';
 
 @Table({ tableName: 'character_versions', timestamps: true, paranoid: true })
 export class CharacterVersion extends Model {
@@ -24,13 +26,8 @@ export class CharacterVersion extends Model {
   @BelongsTo(() => Character)
   character!: Character;
 
-  @ForeignKey(() => Arc)
-  @AllowNull(false)
-  @Column(DataType.INTEGER)
-  arc_id!: number;
-
-  @BelongsTo(() => Arc)
-  arc!: Arc;
+  @BelongsToMany(() => Arc, () => ArcCharacterVersion)
+  arcs!: Arc[];
 
   @AllowNull(true) @Column(DataType.STRING) alias!: string;
 

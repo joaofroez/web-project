@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
 import {
-  BadRequestException,
+  ConflictException,
   NotFoundException,
 } from '@nestjs/common';
-import { Op } from 'sequelize';
+import { UniqueConstraintError } from 'sequelize';
 
 import { CreateArcCommand } from '../impl/create-arc.command';
 import { Arc } from '../../models/arc.model';
@@ -26,39 +26,23 @@ export class CreateArcHandler implements ICommandHandler<CreateArcCommand> {
     // validação da existência da saga
     const saga = await this.sagaModel.findByPk(saga_id);
     if (!saga) {
-      throw new NotFoundException('Saga não encontrada');
+      throw new NotFoundException(`Saga com ID ${saga_id} não encontrada.`);
     }
 
-    // impede duplicidade de ordem ou nome dentro da mesma saga
-    const existing = await this.arcModel.findOne({
-      where: {
+    try {
+      return await this.arcModel.create({
+        name,
+        description,
         saga_id,
-        [Op.or]: [{ order }, { name }],
-      },
-    });
-
-    if (existing) {
-      if (existing.order === order) {
-        throw new BadRequestException(
-          'Já existe um arco com essa ordem nessa saga',
+        order,
+      });
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        throw new ConflictException(
+          `Já existe um arco com o nome "${name}" ou ordem "${order}" nesta saga.`,
         );
       }
-
-      if (existing.name === name) {
-        throw new BadRequestException(
-          'Já existe um arco com esse nome nessa saga',
-        );
-      }
+      throw error;
     }
-
-    // criação
-    const arc = await this.arcModel.create({
-      name,
-      description,
-      saga_id,
-      order,
-    });
-
-    return arc;
   }
 }

@@ -10,7 +10,7 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
 import { RequirePermissions } from '../common/decorators/require-permissions.decorator';
@@ -36,6 +36,15 @@ export class ArcsController {
   @Post()
   create(@Body() dto: CreateArcDto) {
     return this.arcsService.create(dto);
+  }
+
+  @ApiOperation({ summary: 'Criar múltiplos arcos em lote' })
+  @ApiBody({ type: [CreateArcDto] })
+  @ApiResponse({ status: 201, description: 'Arcos criados com sucesso.' })
+  @RequirePermissions('arcs.create')
+  @Post('bulk')
+  createBulk(@Body() dtos: CreateArcDto[]) {
+    return this.arcsService.createBulk(dtos);
   }
 
   @ApiOperation({ summary: 'Listar arcos com filtros e paginação' })

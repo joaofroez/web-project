@@ -3,23 +3,21 @@ import {
   Column,
   Model,
   DataType,
-  ForeignKey,
-  BelongsTo,
   BelongsToMany,
+  HasMany,
 } from 'sequelize-typescript';
 
 import { Optional } from 'sequelize';
 import { Arc } from '../../arcs/models/arc.model';
+import { ArcIsland } from '../../arcs/models/arc-island.model';
 import { CharacterVersion } from '../../character-versions/models/character-version.model';
 import { IslandCharacterVersion } from '../../island-character-versions/models/island-character-version.model';
-import { HasMany } from 'sequelize-typescript';
 import { Event } from '../../events/models/event.model';
 
 interface IslandAttributes {
   id: number;
   name: string;
   description: string;
-  arc_id: number;
   coordinate_x: number;
   coordinate_y: number;
   coordinate_z: number;
@@ -43,18 +41,11 @@ export class Island extends Model<
   @Column({ primaryKey: true, autoIncrement: true, type: DataType.INTEGER })
   id!: number;
 
-  @Column({ allowNull: false })
+  @Column({ allowNull: false, unique: true })
   name!: string;
 
   @Column({ allowNull: false, type: DataType.TEXT })
   description!: string;
-
-  @ForeignKey(() => Arc)
-  @Column({ allowNull: false })
-  arc_id!: number;
-
-  @BelongsTo(() => Arc)
-  arc!: Arc;
 
   @Column({ allowNull: false })
   coordinate_x!: number;
@@ -73,6 +64,10 @@ export class Island extends Model<
 
   @Column({ defaultValue: true })
   is_active!: boolean;
+
+  // ilha pode pertencer a múltiplos arcos (entidade geográfica global)
+  @BelongsToMany(() => Arc, () => ArcIsland)
+  arcs!: Arc[];
 
   @BelongsToMany(() => CharacterVersion, () => IslandCharacterVersion)
   character_versions!: CharacterVersion[];

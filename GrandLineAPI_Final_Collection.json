@@ -1,0 +1,114 @@
+{
+  "info": {
+    "name": "Grand Line API - Technical Collection (V3)",
+    "description": "Endpoints organizados por rotas técnicas separadas",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. AUTH",
+      "item": [
+        {
+          "name": "POST /auth/login",
+          "event": [{ "listen": "test", "script": { "exec": ["var jsonData = pm.response.json(); if (jsonData.access_token) { pm.collectionVariables.set(\"token\", jsonData.access_token); }"], "type": "text/javascript" } }],
+          "request": { "method": "POST", "body": { "mode": "raw", "raw": "{\"username\": \"admin@grandline.com\", \"password\": \"admin123\"}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] } }
+        }
+      ]
+    },
+    {
+      "name": "1. ADMIN - USERS",
+      "item": [
+        { "name": "GET /users", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] } } },
+        { "name": "POST /users", "request": { "method": "POST", "body": { "mode": "raw", "raw": "{\"username\": \"novo@user.com\", \"password\": \"senha123\", \"profile_id\": 1}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] } } },
+        { "name": "GET /users/:id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/users/1", "host": ["{{baseUrl}}"], "path": ["users", "1"] } } },
+        { "name": "PATCH /users/:id", "request": { "method": "PATCH", "body": { "mode": "raw", "raw": "{\"username\": \"updated@user.com\"}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/users/1", "host": ["{{baseUrl}}"], "path": ["users", "1"] } } },
+        { "name": "DELETE /users/:id", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/users/1", "host": ["{{baseUrl}}"], "path": ["users", "1"] } } }
+      ]
+    },
+    {
+      "name": "2. ADMIN - PROFILES & PERMS",
+      "item": [
+        { "name": "GET /profiles", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/profiles", "host": ["{{baseUrl}}"], "path": ["profiles"] } } },
+        { "name": "POST /profiles", "request": { "method": "POST", "body": { "mode": "raw", "raw": "{\"name\": \"Moderador\", \"permission_ids\": [1, 2]}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/profiles", "host": ["{{baseUrl}}"], "path": ["profiles"] } } },
+        { "name": "GET /permissions", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/permissions", "host": ["{{baseUrl}}"], "path": ["permissions"] } } }
+      ]
+    },
+    {
+      "name": "3. SAGAS",
+      "item": [
+        { "name": "GET /sagas", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/sagas", "host": ["{{baseUrl}}"], "path": ["sagas"] } } },
+        { "name": "POST /sagas", "request": { "method": "POST", "body": { "mode": "raw", "raw": "{\"name\": \"Saga do East Blue\", \"order\": 1}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/sagas", "host": ["{{baseUrl}}"], "path": ["sagas"] } } },
+        { "name": "POST /sagas/bulk", "request": { "method": "POST", "body": { "mode": "raw", "raw": "[{\"name\": \"S1\", \"order\": 10}]", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/sagas/bulk", "host": ["{{baseUrl}}"], "path": ["sagas", "bulk"] } } },
+        { "name": "PATCH /sagas/:id", "request": { "method": "PATCH", "body": { "mode": "raw", "raw": "{\"name\": \"Updated\"}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/sagas/1", "host": ["{{baseUrl}}"], "path": ["sagas", "1"] } } },
+        { "name": "DELETE /sagas/:id", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/sagas/1", "host": ["{{baseUrl}}"], "path": ["sagas", "1"] } } }
+      ]
+    },
+    {
+      "name": "4. ARCS",
+      "item": [
+        { "name": "GET /arcs", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/arcs", "host": ["{{baseUrl}}"], "path": ["arcs"] } } },
+        { "name": "POST /arcs", "request": { "method": "POST", "body": { "mode": "raw", "raw": "{\"saga_id\": 1, \"name\": \"Romance Dawn\", \"order\": 1}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/arcs", "host": ["{{baseUrl}}"], "path": ["arcs"] } } },
+        { "name": "POST /arcs/bulk", "request": { "method": "POST", "body": { "mode": "raw", "raw": "[{\"saga_id\": 1, \"name\": \"Bulk Arc\", \"order\": 1}]", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/arcs/bulk", "host": ["{{baseUrl}}"], "path": ["arcs", "bulk"] } } },
+        { "name": "PATCH /arcs/:id", "request": { "method": "PATCH", "body": { "mode": "raw", "raw": "{\"name\": \"Updated\"}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/arcs/1", "host": ["{{baseUrl}}"], "path": ["arcs", "1"] } } },
+        { "name": "DELETE /arcs/:id", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/arcs/1", "host": ["{{baseUrl}}"], "path": ["arcs", "1"] } } }
+      ]
+    },
+    {
+      "name": "5. ISLANDS",
+      "item": [
+        { "name": "GET /islands", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/islands", "host": ["{{baseUrl}}"], "path": ["islands"] } } },
+        { "name": "POST /islands", "request": { "method": "POST", "body": { "mode": "raw", "raw": "{\"name\": \"Dawn\", \"arc_ids\": [1], \"coordinate_x\": 0, \"coordinate_y\": 0, \"coordinate_z\": 0, \"model_url\": \"url\"}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/islands", "host": ["{{baseUrl}}"], "path": ["islands"] } } },
+        { "name": "POST /islands/bulk", "request": { "method": "POST", "body": { "mode": "raw", "raw": "[{\"name\": \"Bulk Island\", \"arc_ids\": [1], \"coordinate_x\": 0, \"coordinate_y\": 0, \"coordinate_z\": 0, \"model_url\": \"url\"}]", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/islands/bulk", "host": ["{{baseUrl}}"], "path": ["islands", "bulk"] } } },
+        { "name": "GET /islands/:id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/islands/1", "host": ["{{baseUrl}}"], "path": ["islands", "1"] } } },
+        { "name": "PATCH /islands/:id", "request": { "method": "PATCH", "body": { "mode": "raw", "raw": "{\"name\": \"Updated Island\"}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/islands/1", "host": ["{{baseUrl}}"], "path": ["islands", "1"] } } },
+        { "name": "DELETE /islands/:id", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/islands/1", "host": ["{{baseUrl}}"], "path": ["islands", "1"] } } }
+      ]
+    },
+    {
+      "name": "6. CHARACTERS",
+      "item": [
+        { "name": "GET /characters", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/characters", "host": ["{{baseUrl}}"], "path": ["characters"] } } },
+        { "name": "POST /characters", "request": { "method": "POST", "body": { "mode": "raw", "raw": "{\"name\": \"Monkey D. Luffy\", \"slug\": \"luffy\"}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/characters", "host": ["{{baseUrl}}"], "path": ["characters"] } } },
+        { "name": "POST /characters/bulk", "request": { "method": "POST", "body": { "mode": "raw", "raw": "[{\"name\": \"Luffy\", \"slug\": \"luffy\"}, {\"name\": \"Zoro\", \"slug\": \"zoro\"}]", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/characters/bulk", "host": ["{{baseUrl}}"], "path": ["characters", "bulk"] } } },
+        { "name": "GET /characters/:id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/characters/1", "host": ["{{baseUrl}}"], "path": ["characters", "1"] } } },
+        { "name": "PATCH /characters/:id", "request": { "method": "PATCH", "body": { "mode": "raw", "raw": "{\"name\": \"Luffy Updated\"}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/characters/1", "host": ["{{baseUrl}}"], "path": ["characters", "1"] } } },
+        { "name": "DELETE /characters/:id", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/characters/1", "host": ["{{baseUrl}}"], "path": ["characters", "1"] } } }
+      ]
+    },
+    {
+      "name": "7. CHARACTER VERSIONS",
+      "item": [
+        { "name": "GET /character-versions", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/character-versions", "host": ["{{baseUrl}}"], "path": ["character-versions"] } } },
+        { "name": "POST /character-versions", "request": { "method": "POST", "body": { "mode": "raw", "raw": "{\"character_id\": 1, \"arc_ids\": [1, 2, 3], \"alias\": \"Luffy\", \"status\": \"ALIVE\"}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/character-versions", "host": ["{{baseUrl}}"], "path": ["character-versions"] } } },
+        { "name": "POST /character-versions/bulk", "request": { "method": "POST", "body": { "mode": "raw", "raw": "[{\"character_id\": 1, \"arc_ids\": [1], \"alias\": \"V1\", \"status\": \"ALIVE\"}]", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/character-versions/bulk", "host": ["{{baseUrl}}"], "path": ["character-versions", "bulk"] } } },
+        { "name": "GET /character-versions/:id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/character-versions/1", "host": ["{{baseUrl}}"], "path": ["character-versions", "1"] } } },
+        { "name": "PATCH /character-versions/:id", "request": { "method": "PATCH", "body": { "mode": "raw", "raw": "{\"bounty\": 30000000}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/character-versions/1", "host": ["{{baseUrl}}"], "path": ["character-versions", "1"] } } },
+        { "name": "DELETE /character-versions/:id", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/character-versions/1", "host": ["{{baseUrl}}"], "path": ["character-versions", "1"] } } }
+      ]
+    },
+    {
+      "name": "8. ISLAND CHARACTER VERSIONS",
+      "item": [
+        { "name": "POST /island-character-versions", "request": { "method": "POST", "body": { "mode": "raw", "raw": "{\"island_id\": 1, \"character_version_id\": 1, \"order\": 1}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/island-character-versions", "host": ["{{baseUrl}}"], "path": ["island-character-versions"] } } }
+      ]
+    },
+    {
+      "name": "9. EVENTS",
+      "item": [
+        { "name": "GET /events", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/events", "host": ["{{baseUrl}}"], "path": ["events"] } } },
+        { "name": "POST /events/bulk", "request": { "method": "POST", "body": { "mode": "raw", "raw": "[{\"island_id\": 1, \"title\": \"Evento\", \"type\": \"Lore\", \"order\": 1}]", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/events/bulk", "host": ["{{baseUrl}}"], "path": ["events", "bulk"] } } },
+        { "name": "GET /events/:id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/events/1", "host": ["{{baseUrl}}"], "path": ["events", "1"] } } },
+        { "name": "GET /events/:id/participants", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/events/1/participants", "host": ["{{baseUrl}}"], "path": ["events", "1", "participants"] } } },
+        { "name": "POST /events/:id/participants", "request": { "method": "POST", "body": { "mode": "raw", "raw": "{\"character_version_id\": 1}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/events/1/participants", "host": ["{{baseUrl}}"], "path": ["events", "1", "participants"] } } },
+        { "name": "DELETE /events/:id/participants/:vid", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/events/1/participants/1", "host": ["{{baseUrl}}"], "path": ["events", "1", "participants", "1"] } } },
+        { "name": "PATCH /events/:id", "request": { "method": "PATCH", "body": { "mode": "raw", "raw": "{\"title\": \"Novo Título\"}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/events/1", "host": ["{{baseUrl}}"], "path": ["events", "1"] } } },
+        { "name": "DELETE /events/:id", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/events/1", "host": ["{{baseUrl}}"], "path": ["events", "1"] } } }
+      ]
+    }
+  ],
+  "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api", "type": "string" },
+    { "key": "token", "value": "", "type": "string" }
+  ]
+}

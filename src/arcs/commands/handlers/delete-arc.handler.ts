@@ -29,11 +29,11 @@ export class DeleteArcHandler implements ICommandHandler<DeleteArcCommand> {
     }
 
     // REGRA 2 — Não pode deletar se tiver ilhas vinculadas
-    const hasIslands = await this.islandModel.findOne({
-      where: { arc_id: id },
+    const arcWithIslands = await this.arcModel.findByPk(id, {
+      include: [{ model: Island, attributes: ['id'] }],
     });
 
-    if (hasIslands) {
+    if (arcWithIslands?.islands && arcWithIslands.islands.length > 0) {
       throw new BadRequestException(
         'Não é possível deletar um arco que possui ilhas vinculadas',
       );

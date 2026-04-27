@@ -15,6 +15,12 @@ export class IslandCharacterFilterDto {
   @IsInt()
   character_version_id?: number;
 
+  @ApiPropertyOptional({ example: 1, description: 'Filtrar personagens de um arco específico nesta ilha' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  arc_id?: number;
+
   @ApiPropertyOptional({ example: 1, default: 1, description: 'Página atual' })
   @IsOptional()
   @Type(() => Number)

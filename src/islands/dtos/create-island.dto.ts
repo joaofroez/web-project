@@ -5,6 +5,8 @@ import {
   IsOptional,
   IsBoolean,
   IsUrl,
+  IsArray,
+  ArrayNotEmpty,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -20,10 +22,11 @@ export class CreateIslandDto {
   @IsNotEmpty()
   description!: string;
 
-  @ApiProperty({ example: 1, description: 'ID do arco ao qual a ilha pertence' })
-  @Type(() => Number)
-  @IsNumber()
-  arc_id!: number;
+  @ApiProperty({ example: [1], description: 'IDs dos arcos em que esta ilha aparece', type: [Number] })
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNumber({}, { each: true })
+  arc_ids!: number[];
 
   @ApiProperty({ example: 100.5, description: 'Coordenada X no mapa 3D' })
   @Type(() => Number)

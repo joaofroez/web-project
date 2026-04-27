@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
 import { RequirePermissions } from '../common/decorators/require-permissions.decorator';
@@ -26,6 +26,15 @@ export class EventsController {
     return this.eventsService.create(createEventDto);
   }
 
+  @ApiOperation({ summary: 'Registrar múltiplos eventos em lote' })
+  @ApiBody({ type: [CreateEventDto] })
+  @ApiResponse({ status: 201, description: 'Eventos criados com sucesso.' })
+  @RequirePermissions('events.create')
+  @Post('bulk')
+  createBulk(@Body() dtos: CreateEventDto[]) {
+    return this.eventsService.createBulk(dtos);
+  }
+
   @ApiOperation({ summary: 'Listar eventos com filtros e paginação' })
   @ApiResponse({ status: 200, description: 'Lista de eventos retornada com sucesso.' })
   @RequirePermissions('events.view')
@@ -41,6 +50,41 @@ export class EventsController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.eventsService.findOne(id);
+  }
+
+  @ApiOperation({ summary: 'Listar personagens participantes de um evento' })
+  @ApiResponse({ status: 200, description: 'Participantes retornados com sucesso.' })
+  @ApiResponse({ status: 404, description: 'Evento não encontrado.' })
+  @RequirePermissions('events.view')
+  @Get(':id/participants')
+  getParticipants(@Param('id', ParseIntPipe) id: number) {
+    return this.eventsService.getParticipants(id);
+  }
+
+  @ApiOperation({ summary: 'Adicionar personagem (versão) como participante de um evento' })
+  @ApiBody({ schema: { properties: { character_version_id: { type: 'number', example: 1 } } } })
+  @ApiResponse({ status: 201, description: 'Participante adicionado com sucesso.' })
+  @ApiResponse({ status: 404, description: 'Evento ou versão de personagem não encontrado.' })
+  @ApiResponse({ status: 409, description: 'Participante já vinculado a este evento.' })
+  @RequirePermissions('events.create')
+  @Post(':id/participants')
+  addParticipant(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('character_version_id', ParseIntPipe) character_version_id: number,
+  ) {
+    return this.eventsService.addParticipant(id, character_version_id);
+  }
+
+  @ApiOperation({ summary: 'Remover personagem (versão) de um evento' })
+  @ApiResponse({ status: 200, description: 'Participante removido com sucesso.' })
+  @ApiResponse({ status: 404, description: 'Participante não encontrado neste evento.' })
+  @RequirePermissions('events.delete')
+  @Delete(':id/participants/:character_version_id')
+  removeParticipant(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('character_version_id', ParseIntPipe) character_version_id: number,
+  ) {
+    return this.eventsService.removeParticipant(id, character_version_id);
   }
 
   @ApiOperation({ summary: 'Atualizar dados de um evento existente' })
@@ -61,3 +105,4 @@ export class EventsController {
     return this.eventsService.remove(id);
   }
 }
+

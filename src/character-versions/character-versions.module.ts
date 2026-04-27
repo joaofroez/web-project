@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { CharacterVersion } from './models/character-version.model';
 import { Character } from '../characters/models/character.model';
 import { Arc } from '../arcs/models/arc.model';
+import { ArcCharacterVersion } from '../arcs/models/arc-character-version.model';
 import { CharacterVersionsService } from './character-versions.service';
 import { CharacterVersionsController } from './character-versions.controller';
 
@@ -15,7 +16,7 @@ import { GetCharacterVersionsHandler } from './queries/handlers/get-character-ve
 import { GetCharacterVersionHandler } from './queries/handlers/get-character-version.handler';
 
 @Module({
-  imports: [CqrsModule, SequelizeModule.forFeature([CharacterVersion, Character, Arc])],
+  imports: [CqrsModule, SequelizeModule.forFeature([CharacterVersion, Character, Arc, ArcCharacterVersion])],
   controllers: [CharacterVersionsController],
   providers: [
     CharacterVersionsService,

@@ -62,18 +62,17 @@ export class GetIslandDetailsHandler
         z: island.coordinate_z,
       },
 
-      arc: island.arc,
+      arcs: island.arcs?.map(a => ({ id: a.id, name: a.name })) ?? [],
 
       characters:
         island.character_versions?.map((cv) => ({
-          id: cv.character.id,
-          name: cv.alias || cv.character.name,
+          id: cv.character?.id,
+          name: cv.alias || cv.character?.name,
           epithet: cv.epithet,
           image: cv.image_url,
           bounty: cv.bounty,
           status: cv.status,
         })) ?? [],
-
 
       events:
         island.events

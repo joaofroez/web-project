@@ -22,9 +22,9 @@ O projeto foi construído como trabalho acadêmico (P1) e segue padrões de dese
 | Fase | Descrição | Status |
 |---|---|---|
 | **Fase 1 - API & Segurança** | Criação de todos os endpoints CRUD, implementação de RBAC, autenticação JWT e documentação Swagger | ✅ Concluída |
-| **Fase 2 - Regras de Negócio** | Implementação das 10 regras de domínio complexas (bloqueios, validações de consistência) | 🔄 Em andamento |
-| **Fase 3 - Dados (Seeds)** | Coleta e inserção de dados reais de One Piece: sagas, arcos, personagens, ilhas e eventos | 📋 Pendente |
-| **Fase 4 - Interface** | Frontend de exploração do mapa interativo com visualização dos dados da API | 📋 Futura |
+| **Fase 2 - Regras de Negócio** | Implementação de 11 regras de domínio (bloqueios, cronologia, ilhas globais, status dinâmico) | ✅ Concluída |
+| **Fase 3 - Dados & Narrativa** | Refatoração para Ilhas Globais, Eventos com Participantes e Status Inteligente | ✅ Concluída |
+| **Fase 4 - Conteúdo (Seeds)** | Coleta e inserção de dados reais de One Piece: sagas, arcos, personagens e eventos | 📋 Pendente |
 | **Fase 5 - Modelagem 3D** | Modelagem das ilhas icônicas (Alabasta, Marineford, etc.) em 3D para o mapa | 📋 Futura |
 
 ---
@@ -145,8 +145,15 @@ docker compose up -d
 npm install
 ```
 
-### 4. Executar Migrations e Seeds
+### 4. Executar Migrations e Seeds (ou Reset Completo)
 
+Para uma instalação limpa ou para limpar o banco após testes:
+```bash
+# Executa rollback total, migrações e seeds em um único comando
+./reset.sh
+```
+
+Ou manualmente:
 ```bash
 npx sequelize-cli db:migrate
 npx sequelize-cli db:seed:all
@@ -158,9 +165,20 @@ npx sequelize-cli db:seed:all
 npm run start:dev
 ```
 
-A API estará disponível em: **`http://localhost:3000`**
+A API estará disponível em: **`http://localhost:3000/api`**
 
-A documentação Swagger estará em: **`http://localhost:3000/api`**
+A documentação Swagger estará em: **`http://localhost:3000/api/docs`**
+
+---
+
+## 🧪 Como Testar (Postman)
+
+Deixamos uma coleção técnica completa na raiz do projeto:
+`GrandLineAPI_Final_Collection.json`
+
+1. Importe o arquivo no Postman.
+2. Execute o request **0. AUTH > Login** (o token será salvo automaticamente).
+3. Utilize os requests de **Bulk** para povoar o banco com dados massivos rapidamente.
 
 ---
 

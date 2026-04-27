@@ -10,7 +10,7 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
 import { RequirePermissions } from '../common/decorators/require-permissions.decorator';
@@ -36,6 +36,15 @@ export class SagasController {
   @Post()
   create(@Body() dto: CreateSagaDto) {
     return this.sagasService.create(dto);
+  }
+
+  @ApiOperation({ summary: 'Criar múltiplas sagas em lote' })
+  @ApiBody({ type: [CreateSagaDto] })
+  @ApiResponse({ status: 201, description: 'Sagas criadas com sucesso.' })
+  @RequirePermissions('sagas.create')
+  @Post('bulk')
+  createBulk(@Body() dtos: CreateSagaDto[]) {
+    return this.sagasService.createBulk(dtos);
   }
 
   @ApiOperation({ summary: 'Listar sagas com paginação' })

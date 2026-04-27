@@ -6,6 +6,7 @@ import { UpdateSagaDto } from './dtos/update-saga-dto';
 import { FilterSagaDto } from './dtos/filter-saga-dto';
 
 import { CreateSagaCommand } from './commands/impl/create-saga.command';
+import { CreateSagasBulkCommand } from './commands/impl/create-sagas-bulk.command';
 import { UpdateSagaCommand } from './commands/impl/update-saga.command';
 import { DeleteSagaCommand } from './commands/impl/delete-saga.command';
 
@@ -22,7 +23,14 @@ export class SagasService {
   // CREATE
   async create(dto: CreateSagaDto) {
     return this.commandBus.execute(
-      new CreateSagaCommand(dto.name, dto.order),
+      new CreateSagaCommand(dto.name, dto.order, dto.description),
+    );
+  }
+
+  // BULK CREATE
+  async createBulk(dtos: CreateSagaDto[]) {
+    return this.commandBus.execute(
+      new CreateSagasBulkCommand(dtos),
     );
   }
 

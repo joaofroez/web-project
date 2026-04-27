@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
-import { BadRequestException } from '@nestjs/common';
-import { Op } from 'sequelize';
+import { ConflictException } from '@nestjs/common';
+import { UniqueConstraintError } from 'sequelize';
 
 import { CreateSagaCommand } from '../impl/create-saga.command';
 import { Saga } from 'src/sagas/models/saga.model';
@@ -14,31 +14,21 @@ export class CreateSagaHandler implements ICommandHandler<CreateSagaCommand> {
   ) {}
 
   async execute(command: CreateSagaCommand): Promise<Saga> {
-    const { name, order } = command;
+    const { name, order, description } = command;
 
-    const existing = await this.sagaModel.findOne({
-      where: {
-        [Op.or]: [{ order }, { name }],
-      },
-    });
-
-    if (existing) {
-      if (existing.order === order) {
-        throw new BadRequestException(
-          'Já existe uma saga com essa ordem',
+    try {
+      return await this.sagaModel.create({
+        name,
+        order,
+        description,
+      });
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        throw new ConflictException(
+          `Já existe uma saga com este nome ou ordem de sequência (${name} / ${order}).`,
         );
       }
-
-      if (existing.name === name) {
-        throw new BadRequestException(
-          'Já existe uma saga com esse nome',
-        );
-      }
+      throw error;
     }
-
-    return this.sagaModel.create({
-      name,
-      order,
-    });
   }
 }

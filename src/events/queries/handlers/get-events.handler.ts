@@ -26,6 +26,8 @@ export class GetEventsHandler implements IQueryHandler<GetEventsQuery> {
       where,
       limit: Number(limit),
       offset: Number(offset),
+      distinct: true,
+      subQuery: false,
       order: [['order', 'ASC']],
     });
   }

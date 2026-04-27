@@ -4,6 +4,7 @@ import { Op } from 'sequelize';
 
 import { GetIslandsQuery } from '../impl/get-islands.query';
 import { Island } from '../../models/island.model';
+import { Arc } from '../../../arcs/models/arc.model';
 
 @QueryHandler(GetIslandsQuery)
 export class GetIslandsHandler
@@ -28,8 +29,13 @@ export class GetIslandsHandler
       where.is_active = true;
     }
 
+    const include: any[] = [];
     if (arc_id) {
-      where.arc_id = arc_id;
+      include.push({
+        model: Arc,
+        where: { id: arc_id },
+        through: { attributes: [] }
+      });
     }
 
     const { rows, count } = await this.islandModel.findAndCountAll({
@@ -42,8 +48,11 @@ export class GetIslandsHandler
         'coordinate_z',
         'model_url',
       ],
+      include,
       limit,
       offset,
+      distinct: true,
+      subQuery: false,
       order: [['id', 'ASC']],
     });
 

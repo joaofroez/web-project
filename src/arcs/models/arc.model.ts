@@ -5,12 +5,15 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
+  BelongsToMany,
 } from 'sequelize-typescript';
 
 import { Optional } from 'sequelize';
 import { Saga } from '../../sagas/models/saga.model';
 import { Island } from '../../islands/models/island.model';
-import { HasMany } from 'sequelize-typescript';
+import { ArcIsland } from './arc-island.model';
+import { CharacterVersion } from '../../character-versions/models/character-version.model';
+import { ArcCharacterVersion } from './arc-character-version.model';
 
 interface ArcAttributes {
   id: number;
@@ -64,6 +67,10 @@ export class Arc extends Model<ArcAttributes, ArcCreationAttributes> {
   })
   order!: number;
 
-  @HasMany(() => Island)
+  // um arco pode ter múltiplas ilhas (relação narrativa-geográfica)
+  @BelongsToMany(() => Island, () => ArcIsland)
   islands!: Island[];
+
+  @BelongsToMany(() => CharacterVersion, () => ArcCharacterVersion)
+  character_versions!: CharacterVersion[];
 }

@@ -8,8 +8,11 @@ import {
   AllowNull,
   ForeignKey,
   BelongsTo,
+  BelongsToMany,
 } from 'sequelize-typescript';
 import { Island } from '../../islands/models/island.model';
+import { CharacterVersion } from '../../character-versions/models/character-version.model';
+import { EventParticipant } from './event-participant.model';
 
 @Table({ tableName: 'events', timestamps: true, paranoid: true })
 export class Event extends Model {
@@ -33,9 +36,13 @@ export class Event extends Model {
 
   @AllowNull(false)
   @Column(DataType.STRING)
-  type!: string; 
+  type!: string;
 
   @AllowNull(false)
   @Column({ type: DataType.INTEGER, defaultValue: 0 })
   order!: number;
+
+  // personagens (por versão) que participaram deste evento
+  @BelongsToMany(() => CharacterVersion, () => EventParticipant)
+  participants!: CharacterVersion[];
 }

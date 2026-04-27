@@ -1,13 +1,13 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
-import {
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
+import { Sequelize } from 'sequelize-typescript';
+import { Op } from 'sequelize';
 
 import { UpdateIslandCommand } from '../impl/update-island.command';
 import { Island } from '../../models/island.model';
 import { Arc } from '../../../arcs/models/arc.model';
+import { ArcIsland } from '../../../arcs/models/arc-island.model';
 
 @CommandHandler(UpdateIslandCommand)
 export class UpdateIslandHandler
@@ -19,6 +19,11 @@ export class UpdateIslandHandler
 
     @InjectModel(Arc)
     private readonly arcModel: typeof Arc,
+
+    @InjectModel(ArcIsland)
+    private readonly arcIslandModel: typeof ArcIsland,
+
+    private readonly sequelize: Sequelize,
   ) {}
 
   async execute(command: UpdateIslandCommand): Promise<Island> {
@@ -26,7 +31,7 @@ export class UpdateIslandHandler
       id,
       name,
       description,
-      arc_id,
+      arc_ids,
       coordinate_x,
       coordinate_y,
       coordinate_z,
@@ -35,53 +40,53 @@ export class UpdateIslandHandler
       is_active,
     } = command;
 
-    // REGRA 1 — island deve existir
     const island = await this.islandModel.findByPk(id);
     if (!island) {
-      throw new NotFoundException('Island não encontrada');
+      throw new NotFoundException('Ilha não encontrada');
     }
 
-    // REGRA 2 — definir arc alvo (caso mude)
-    let targetArcId = island.arc_id;
+    return this.sequelize.transaction(async (t) => {
+      await island.update({
+        name: name ?? island.name,
+        description: description ?? island.description,
+        coordinate_x: coordinate_x ?? island.coordinate_x,
+        coordinate_y: coordinate_y ?? island.coordinate_y,
+        coordinate_z: coordinate_z ?? island.coordinate_z,
+        model_url: model_url ?? island.model_url,
+        thumbnail_url: thumbnail_url ?? island.thumbnail_url,
+        is_active: is_active ?? island.is_active,
+      }, { transaction: t });
 
-    if (arc_id !== undefined && arc_id !== island.arc_id) {
-      const arc = await this.arcModel.findByPk(arc_id);
-      if (!arc) {
-        throw new NotFoundException('Arc não encontrado');
+      if (arc_ids !== undefined) {
+        // remove vínculos antigos
+        await this.arcIslandModel.destroy({ 
+          where: { island_id: id },
+          transaction: t 
+        });
+
+        if (arc_ids.length > 0) {
+          // busca ordens atuais para os arcos alvo
+          const arcOrderMap = new Map<number, number>();
+          const currentMaxOrders = await this.arcIslandModel.findAll({
+            attributes: ['arc_id', [Sequelize.fn('MAX', Sequelize.col('order')), 'maxOrder']],
+            where: { arc_id: { [Op.in]: arc_ids } },
+            group: ['arc_id'],
+            transaction: t
+          });
+          currentMaxOrders.forEach((item: any) => {
+            arcOrderMap.set(item.arc_id, Number(item.get('maxOrder')));
+          });
+
+          const pivots = arc_ids.map((arc_id) => {
+            const nextOrder = (arcOrderMap.get(arc_id) || 0) + 1;
+            arcOrderMap.set(arc_id, nextOrder);
+            return { arc_id, island_id: id, order: nextOrder };
+          });
+          await this.arcIslandModel.bulkCreate(pivots, { transaction: t });
+        }
       }
 
-      targetArcId = arc_id;
-    }
-
-    // REGRA 3 — validar nome único dentro do arc
-    if (name !== undefined) {
-      const existing = await this.islandModel.findOne({
-        where: {
-          name,
-          arc_id: targetArcId,
-        },
-      });
-
-      if (existing && existing.id !== id) {
-        throw new BadRequestException(
-          'Já existe uma ilha com esse nome neste arco',
-        );
-      }
-    }
-
-    // update
-    await island.update({
-      name: name ?? island.name,
-      description: description ?? island.description,
-      arc_id: targetArcId,
-      coordinate_x: coordinate_x ?? island.coordinate_x,
-      coordinate_y: coordinate_y ?? island.coordinate_y,
-      coordinate_z: coordinate_z ?? island.coordinate_z,
-      model_url: model_url ?? island.model_url,
-      thumbnail_url: thumbnail_url ?? island.thumbnail_url,
-      is_active: is_active ?? island.is_active,
+      return island;
     });
-
-    return island;
   }
 }

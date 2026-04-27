@@ -1,5 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
+import { ConflictException } from '@nestjs/common';
+import { UniqueConstraintError } from 'sequelize';
 import { CreateCharacterCommand } from '../impl/create-character.command';
 import { Character } from '../../models/character.model';
 
@@ -11,6 +13,13 @@ export class CreateCharacterHandler implements ICommandHandler<CreateCharacterCo
   ) {}
 
   async execute(command: CreateCharacterCommand) {
-    return this.characterModel.create(command.data as any);
+    try {
+      return await this.characterModel.create(command.data as any);
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        throw new ConflictException(`Um personagem com o slug "${command.data.slug}" já existe.`);
+      }
+      throw error;
+    }
   }
 }

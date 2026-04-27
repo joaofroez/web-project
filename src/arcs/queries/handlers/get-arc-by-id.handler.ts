@@ -20,6 +20,7 @@ export class GetArcByIdHandler implements IQueryHandler<GetArcByIdQuery> {
       include: [
         {
           model: Island,
+          through: { attributes: ['order'] }, // traz a ordem da ilha neste arco
           attributes: ['id', 'name', 'coordinate_x', 'coordinate_y', 'coordinate_z'],
         },
       ],

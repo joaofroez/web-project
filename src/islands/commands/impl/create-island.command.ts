@@ -2,7 +2,7 @@ export class CreateIslandCommand {
   constructor(
     public readonly name: string,
     public readonly description: string,
-    public readonly arc_id: number,
+    public readonly arc_ids: number[],
     public readonly coordinate_x: number,
     public readonly coordinate_y: number,
     public readonly coordinate_z: number,

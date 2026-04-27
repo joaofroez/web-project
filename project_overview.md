@@ -90,6 +90,20 @@ Essas regras vão além de simples validações de campo — envolvem lógica de
   - O sistema deve impedir a remoção de permissões vitais do perfil `ADMIN`, evitando lockout.
   - A implementar em: handler de gerenciamento de permissões de perfil.
 
+### 4. Gestão Narrativa Global (Fase 4)
+
+- **RN09 — Ilha Revisitada (Global)** ✅ Implementada
+  - Uma ilha pode aparecer em múltiplos arcos, mas a sua ordem (`order`) é específica para cada arco através da tabela pivot `arc_islands`.
+  - Implementada em: `create-island.handler.ts`
+
+- **RN10 — Status Inteligente (Cálculo Virtual)** ✅ Implementada
+  - O `current_status` de um personagem não é fixo; ele é calculado pegando o `status` da versão vinculada ao arco de maior `order`.
+  - Implementada em: `get-characters.handler.ts`, `get-character.handler.ts`
+
+- **RN11 — Integridade de Eventos (Participantes)** ✅ Implementada
+  - Apenas versões de personagens existentes podem participar de eventos. O sistema impede a duplicação de um mesmo personagem no mesmo evento.
+  - Implementada em: `add-participant-to-event.handler.ts`
+
 ---
 
 ## 🔐 Sistema de Permissões (RBAC)
@@ -156,14 +170,17 @@ erDiagram
         int id PK
         varchar name
         text description
-        int arc_id FK
         float coordinate_x
         float coordinate_y
         float coordinate_z
         varchar model_url
         varchar thumbnail_url
-        varchar background_image_url
         boolean is_active
+    }
+    arc_islands {
+        int arc_id FK
+        int island_id FK
+        int order
     }
     characters {
         int id PK
@@ -177,7 +194,7 @@ erDiagram
         varchar alias
         varchar epithet
         bigint bounty
-        varchar status
+        enum status
         varchar image_url
         text description
     }
@@ -194,17 +211,24 @@ erDiagram
         varchar type
         int order
     }
+    event_participants {
+        int event_id FK
+        int character_version_id FK
+    }
 
     users }o--|| profiles : "profile_id"
     profiles ||--o{ profile_permissions : "profile_id"
     permissions ||--o{ profile_permissions : "permission_id"
     sagas ||--o{ arcs : "saga_id"
-    arcs ||--o{ islands : "arc_id"
+    arcs ||--o{ arc_islands : "arc_id"
+    islands ||--o{ arc_islands : "island_id"
     characters ||--o{ character_versions : "character_id"
     arcs ||--o{ character_versions : "arc_id"
     islands ||--o{ island_character_versions : "island_id"
     character_versions ||--o{ island_character_versions : "character_version_id"
     islands ||--o{ events : "island_id"
+    events ||--o{ event_participants : "event_id"
+    character_versions ||--o{ event_participants : "character_version_id"
 ```
 
 ---

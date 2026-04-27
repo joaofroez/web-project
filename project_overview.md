@@ -38,24 +38,68 @@ Para manter a consistência em +60 endpoints, adotamos o seguinte padrão rigoro
 ---
 
 ## 📋 Requisitos Obrigatórios (Trabalho Acadêmico)
-- [ ] **Endpoints**: Mínimo de 60 endpoints implementados.
-- [ ] **Documentação**: Swagger completo e obrigatório.
-- [ ] **Listagem**: Todos os endpoints de listagem devem ter **Paginação** e pelo menos **2 Filtros**.
-- [ ] **Segurança**: Autenticação e controle de acesso via **Perfil e Permissão**.
-- [ ] **Regras de Negócio**: Mínimo de 10 regras complexas (não apenas validações de campo).
-- [ ] **Persistência**: Uso obrigatório de **Migrations** e **Seeds**.
+- [/] **Endpoints**: Meta de 60. Atualmente ~52 endpoints implementados.
+- [x] **Documentação**: Swagger completo, padronizado em PT-BR com exemplos reais de One Piece.
+- [x] **Listagem**: Todos os endpoints de listagem possuem paginação e pelo menos 2 filtros.
+- [x] **Segurança**: Autenticação JWT + RBAC granular aplicado em todos os endpoints.
+- [/] **Regras de Negócio**: 10 necessárias. ~4 implementadas (bloqueio de exclusão de Arcs, Bulk atômico).
+- [x] **Persistência**: Migrations implementadas. Seeds básicos de Profiles/Permissions existentes.
 
 ---
 
-## 🏗️ Arquitetura: Foco em CQRS
-Para garantir escalabilidade e aprendizado técnico, o projeto adotará **CQRS** logo no primeiro commit:
-- **Commands**: Responsáveis por mutações de estado (Create, Update, Delete).
-- **Queries**: Responsáveis por consultas otimizadas e leitura de dados.
-- **Vertical Slice**: A estrutura de pastas será organizada por funcionalidade (entidade), mantendo comandos, queries, modelos e controllers próximos.
+## 🗺️ Roadmap Global (TODO List)
+
+### Fase 1: Fundação & Segurança ✅ Concluída
+- [x] **Configuração CQRS**: Setup do `@nestjs/cqrs` e organização da pasta `src/shared`.
+- [x] **Módulo de RBAC (CQRS)**:
+    - [x] CRUD de `PROFILES` (Commands/Queries).
+    - [x] CRUD de `PERMISSIONS` (Commands/Queries).
+    - [x] Gerenciamento de `PROFILE_PERMISSIONS` (`POST /profiles/:id/permissions`).
+- [x] **Autenticação**:
+    - [x] Login de `USERS` com JWT.
+    - [x] Guards `JwtAuthGuard` e `PermissionsGuard`.
+    - [x] Suporte a `IGNORE_PERMISSIONS=true` no `.env` para testes.
+- [x] **Proteção de Dados**:
+    - [x] `password_hash` excluído por padrão via `defaultScope` no modelo `User`.
+    - [x] `@RequirePermissions` aplicado em todos os 52 endpoints da API.
+
+### Fase 2: Núcleo Geográfico & Conteúdo ✅ Concluída (CRUD)
+- [x] **CRUD de Sagas, Arcos, Ilhas, Eventos**.
+- [x] **CRUD de Personagens, Versões, Vínculos Ilha-Personagem**.
+- [x] Filtros e paginação em todos os módulos.
+- [ ] **Regras de Negócio Complexas** (Em andamento — ver `docs/obsidian-vault/Trabalho-P1-Requisitos.md`).
+
+### Fase 3: Interatividade & Gamificação 🔮 Futura
+- [ ] Sistema de Quizzes e lógica de pontuação.
+- [ ] Exploração de ilhas baseada em progresso.
+
+### Fase 4: Polimento & Entrega
+- [ ] Fechar os 8 endpoints restantes (meta: 60).
+- [ ] Completar as 10 regras de negócio complexas.
+- [ ] Expandir Seeds com dados temáticos de One Piece.
+- [ ] Entregar PDF com catálogo das regras de negócio.
 
 ---
 
-## 📊 Diagrama de Entidade-Relacionamento (ERD)
+## 🔐 Sistema de Permissões (RBAC)
+
+Todos os endpoints da API exigem um token JWT válido + permissão correspondente. O mapeamento de slugs é:
+
+| Módulo | `.view` | `.create` | `.update` | `.delete` |
+|---|---|---|---|---|
+| `sagas` | USER | ADMIN | ADMIN | ADMIN |
+| `arcs` | USER | ADMIN | ADMIN | ADMIN |
+| `islands` | USER | ADMIN | ADMIN | ADMIN |
+| `events` | USER | ADMIN | ADMIN | ADMIN |
+| `characters` | USER | ADMIN | ADMIN | ADMIN |
+| `versions` | USER | ADMIN | ADMIN | ADMIN |
+| `island_char` | USER | ADMIN | ADMIN | ADMIN |
+| `users` | ADMIN | ADMIN | ADMIN | ADMIN |
+| `profiles` | ADMIN | ADMIN | ADMIN | ADMIN |
+| `permissions` | ADMIN | ADMIN | ADMIN | ADMIN |
+
+> **Bypass de teste:** Defina `IGNORE_PERMISSIONS=true` no `.env` e reinicie o servidor. O Guard libera todas as rotas sem checagem de banco.
+
 
 > [!NOTE]
 > **Modelo de Auditoria e Soft Delete**: Para manter o diagrama visualmente limpo, as colunas de controle (`id`, `createdAt`, `updatedAt` e `deletedAt`) foram omitidas ou simplificadas. No entanto, todas as entidades principais do sistema implementam obrigatoriamente esse quarteto de campos para garantir rastreabilidade total e suporte ao **Soft Delete** nativo do Sequelize.

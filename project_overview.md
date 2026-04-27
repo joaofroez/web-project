@@ -68,17 +68,17 @@ Essas regras vão além de simples validações de campo — envolvem lógica de
 ### 2. Consistência de Personagens
 
 - **RN04 — Unicidade de Versão por Arco** ✅ Implementada
-  - Um personagem pode ter várias versões, mas apenas **uma versão pode estar vinculada a ilhas de um mesmo Arco**.
+  - Um personagem pode ter várias versões, mas apenas **uma versão pode ser vinculada a uma ilha específica em um dado momento**. A versão deve pertencer aos arcos permitidos para aquela ilha.
   - Implementada em: `add-character-to-island.handler.ts`
 
-- **RN05 — Cronologia de Versões** ✅ Implementada
-  - Uma versão de personagem de um Arco futuro (`arc.order` maior) não pode ser vinculada a uma Ilha de um Arco passado (`arc.order` menor).
-  - Exemplo: "Luffy Pós-Timeskip" não pode aparecer numa ilha do East Blue.
+- **RN05 — Cronologia de Versões (Interseção)** ✅ Implementada
+  - Uma versão de personagem só pode ser vinculada a uma Ilha se um dos arcos da versão coincidir com um dos arcos em que a ilha aparece.
+  - Exemplo: "Luffy Pós-Timeskip" (Arcos: Ilha dos Tritões, Dressrosa) não pode ser vinculado à "Ilha Syrup" (Arco: Vila Syrup).
   - Implementada em: `add-character-to-island.handler.ts`
 
-- **RN06 — Bulk Create Atômico** ✅ Implementada
-  - Criações em lote de personagens validam a unicidade de `slug` antes de qualquer inserção. Se um falhar, nenhum é criado.
-  - Implementada em: `create-characters-bulk.handler.ts`
+- **RN06 — Transação em Lote (Bulk Create)** ✅ Implementada
+  - Criações em lote de qualquer entidade (Sagas, Arcos, Ilhas, Versões, Eventos) são atômicas. Se um item falhar ou violar uma constraint (como slug duplicado), toda a operação é revertida.
+  - Implementada em: Handlers de `*-bulk.handler.ts`
 
 ### 3. Segurança e Acesso
 
@@ -223,7 +223,8 @@ erDiagram
     arcs ||--o{ arc_islands : "arc_id"
     islands ||--o{ arc_islands : "island_id"
     characters ||--o{ character_versions : "character_id"
-    arcs ||--o{ character_versions : "arc_id"
+    character_versions ||--o{ arc_character_versions : "character_version_id"
+    arcs ||--o{ arc_character_versions : "arc_id"
     islands ||--o{ island_character_versions : "island_id"
     character_versions ||--o{ island_character_versions : "character_version_id"
     islands ||--o{ events : "island_id"

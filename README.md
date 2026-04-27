@@ -145,8 +145,15 @@ docker compose up -d
 npm install
 ```
 
-### 4. Executar Migrations e Seeds
+### 4. Executar Migrations e Seeds (ou Reset Completo)
 
+Para uma instalação limpa ou para limpar o banco após testes:
+```bash
+# Executa rollback total, migrações e seeds em um único comando
+./reset.sh
+```
+
+Ou manualmente:
 ```bash
 npx sequelize-cli db:migrate
 npx sequelize-cli db:seed:all
@@ -158,9 +165,20 @@ npx sequelize-cli db:seed:all
 npm run start:dev
 ```
 
-A API estará disponível em: **`http://localhost:3000`**
+A API estará disponível em: **`http://localhost:3000/api`**
 
-A documentação Swagger estará em: **`http://localhost:3000/api`**
+A documentação Swagger estará em: **`http://localhost:3000/api/docs`**
+
+---
+
+## 🧪 Como Testar (Postman)
+
+Deixamos uma coleção técnica completa na raiz do projeto:
+`GrandLineAPI_Final_Collection.json`
+
+1. Importe o arquivo no Postman.
+2. Execute o request **0. AUTH > Login** (o token será salvo automaticamente).
+3. Utilize os requests de **Bulk** para povoar o banco com dados massivos rapidamente.
 
 ---
 

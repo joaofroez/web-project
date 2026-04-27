@@ -7,8 +7,8 @@ import {
 import { Op } from 'sequelize';
 
 import { CreateArcCommand } from '../impl/create-arc.command';
-import { Arc } from 'src/arcs/models/arc.model';
-import { Saga } from 'src/sagas/models/saga.model';
+import { Arc } from '../../models/arc.model';
+import { Saga } from '../../../sagas/models/saga.model';
 
 @CommandHandler(CreateArcCommand)
 export class CreateArcHandler implements ICommandHandler<CreateArcCommand> {
@@ -23,13 +23,13 @@ export class CreateArcHandler implements ICommandHandler<CreateArcCommand> {
   async execute(command: CreateArcCommand): Promise<Arc> {
     const { name, description, saga_id, order } = command;
 
-    // REGRA 1 — validar saga
+    // validação da existência da saga
     const saga = await this.sagaModel.findByPk(saga_id);
     if (!saga) {
       throw new NotFoundException('Saga não encontrada');
     }
 
-    // REGRA 2 e 3 — validar duplicidade (order ou name)
+    // impede duplicidade de ordem ou nome dentro da mesma saga
     const existing = await this.arcModel.findOne({
       where: {
         saga_id,

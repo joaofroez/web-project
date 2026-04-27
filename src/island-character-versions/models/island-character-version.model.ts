@@ -12,7 +12,7 @@ import {
 import { CharacterVersion } from '../../character-versions/models/character-version.model';
 import { Island } from '../../islands/models/island.model';
 
-@Table({ tableName: 'IslandCharacterVersions', timestamps: true })
+@Table({ tableName: 'island_character_versions', timestamps: true, paranoid: true })
 export class IslandCharacterVersion extends Model {
   @PrimaryKey @AutoIncrement @Column(DataType.INTEGER) id!: number;
 
@@ -31,4 +31,8 @@ export class IslandCharacterVersion extends Model {
 
   @BelongsTo(() => CharacterVersion)
   characterVersion!: CharacterVersion;
+
+  @AllowNull(false)
+  @Column({ type: DataType.INTEGER, defaultValue: 0 })
+  order!: number;
 }

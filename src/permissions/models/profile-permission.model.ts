@@ -8,7 +8,7 @@ import {
 import { Profile } from '../../profiles/models/profile.model';
 import { Permission } from './permission.model';
 
-@Table({ tableName: 'ProfilePermissions', timestamps: true })
+@Table({ tableName: 'profile_permissions', timestamps: true, paranoid: true })
 export class ProfilePermission extends Model {
   @ForeignKey(() => Profile)
   @Column({ type: DataType.INTEGER, primaryKey: true })

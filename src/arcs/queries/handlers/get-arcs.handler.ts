@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 
 import { GetArcsQuery } from '../impl/get-arcs.query';
-import { Arc } from 'src/arcs/models/arc.model';
+import { Arc } from '../../models/arc.model';
 
 @QueryHandler(GetArcsQuery)
 export class GetArcsHandler implements IQueryHandler<GetArcsQuery> {
@@ -26,7 +26,7 @@ export class GetArcsHandler implements IQueryHandler<GetArcsQuery> {
 
     // filtro por nome (parcial)
     if (name) {
-      where.name = { [Op.like]: `%${name}%` };
+      where.name = { [Op.iLike]: `%${name}%` };
     }
 
     const { rows, count } = await this.arcModel.findAndCountAll({

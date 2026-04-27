@@ -13,7 +13,7 @@ import {
 import { Profile } from '../../profiles/models/profile.model';
 
 @Table({
-  tableName: 'Users',
+  tableName: 'users',
   timestamps: true,
   paranoid: true,
   defaultScope: {
@@ -32,6 +32,4 @@ export class User extends Model {
   @ForeignKey(() => Profile) @AllowNull(false) @Column(DataType.INTEGER) profile_id!: number;
 
   @BelongsTo(() => Profile) profile!: Profile;
-
-  @AllowNull(true) @Column(DataType.INTEGER) current_arc_id!: number;
 }

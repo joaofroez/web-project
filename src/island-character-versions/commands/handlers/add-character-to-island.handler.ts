@@ -1,6 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
 import { NotFoundException, ConflictException } from '@nestjs/common';
+import { UniqueConstraintError } from 'sequelize';
 import { AddCharacterToIslandCommand } from '../impl/add-character-to-island.command';
 import { IslandCharacterVersion } from '../../models/island-character-version.model';
 import { CharacterVersion } from '../../../character-versions/models/character-version.model';
@@ -21,54 +22,38 @@ export class AddCharacterToIslandHandler implements ICommandHandler<AddCharacter
   async execute(command: AddCharacterToIslandCommand) {
     const { character_version_id, island_id, order } = command.data;
 
-    const version = await this.versionModel.findByPk(character_version_id, {
+    const version: any = await this.versionModel.findByPk(character_version_id, {
       include: [{ model: Arc, attributes: ['id', 'order'] }],
     });
     if (!version) {
-      throw new NotFoundException(`CharacterVersion com ID ${character_version_id} não encontrada.`);
+      throw new NotFoundException(`Versão de personagem com ID ${character_version_id} não encontrada.`);
     }
 
-    const island = await this.islandModel.findByPk(island_id, {
+    const island: any = await this.islandModel.findByPk(island_id, {
       include: [{ model: Arc, attributes: ['id', 'order'] }],
     });
     if (!island) {
-      throw new NotFoundException(`Island com ID ${island_id} não encontrada.`);
+      throw new NotFoundException(`Ilha com ID ${island_id} não encontrada.`);
     }
 
-    // impede duplicata exata na mesma ilha
-    const exactDuplicate = await this.pivotModel.findOne({
-      where: { character_version_id, island_id },
-    });
-    if (exactDuplicate) {
-      throw new ConflictException('Esta versão do personagem já está vinculada a esta ilha.');
-    }
+    // regra fundamental: a versão e a ilha devem compartilhar pelo menos um arco em comum
+    const versionArcIds = (version.arcs || []).map((a: any) => Number(a.id));
+    const islandArcIds = (island.arcs || []).map((a: any) => Number(a.id));
+    const commonArcIds = versionArcIds.filter((id: number) => islandArcIds.includes(id));
 
-    // impede mais de uma versão do mesmo personagem no mesmo arco
-    const otherVersionsSameArc = await this.versionModel.findAll({
-      where: { character_id: version.character_id, arc_id: version.arc_id },
-    });
-    const otherVersionIds = otherVersionsSameArc
-      .filter((v) => v.id !== version.id)
-      .map((v) => v.id);
-
-    if (otherVersionIds.length > 0) {
-      const conflicting = await this.pivotModel.findOne({
-        where: { character_version_id: otherVersionIds },
-      });
-      if (conflicting) {
-        throw new ConflictException(
-          `O personagem já possui outra versão vinculada a uma ilha neste mesmo arco (arc_id: ${version.arc_id}).`,
-        );
-      }
-    }
-
-    // versão mais atual não pode ser vinculada a uma ilha de um arco anterior
-    if (version.arc.order > island.arc.order) {
+    if (commonArcIds.length === 0) {
       throw new ConflictException(
-        `A versão do personagem pertence ao arco de ordem ${version.arc.order}, mais recente que o arco da ilha (ordem ${island.arc.order}). Versões mais atuais não podem existir em períodos anteriores.`,
+        `Esta versão do personagem (Arcos: ${JSON.stringify(versionArcIds)}) não pertence aos arcos desta ilha (Arcos: ${JSON.stringify(islandArcIds)}).`,
       );
     }
 
-    return this.pivotModel.create({ character_version_id, island_id, order });
+    try {
+      return await this.pivotModel.create({ character_version_id, island_id, order });
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        throw new ConflictException('Esta versão do personagem já está vinculada a esta ilha.');
+      }
+      throw error;
+    }
   }
 }

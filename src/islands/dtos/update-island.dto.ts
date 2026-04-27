@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsNumber, IsBoolean, IsUrl } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsBoolean, IsUrl, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -13,11 +13,11 @@ export class UpdateIslandDto {
   @IsString()
   description?: string;
 
-  @ApiPropertyOptional({ example: 1, description: 'ID do arco ao qual a ilha pertence' })
+  @ApiPropertyOptional({ example: [1, 2], description: 'IDs dos arcos em que esta ilha aparece', type: [Number] })
   @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  arc_id?: number;
+  @IsArray()
+  @IsNumber({}, { each: true })
+  arc_ids?: number[];
 
   @ApiPropertyOptional({ example: 150.0, description: 'Coordenada X no mapa 3D' })
   @IsOptional()

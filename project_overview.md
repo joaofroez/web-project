@@ -38,52 +38,61 @@ Para manter a consistência em +60 endpoints, adotamos o seguinte padrão rigoro
 ---
 
 ## 📋 Requisitos Obrigatórios (Trabalho Acadêmico)
-- [/] **Endpoints**: Meta de 60. Atualmente ~52 endpoints implementados.
+- [/] **Endpoints**: Meta de 60. Atualmente ~52 implementados.
 - [x] **Documentação**: Swagger completo, padronizado em PT-BR com exemplos reais de One Piece.
 - [x] **Listagem**: Todos os endpoints de listagem possuem paginação e pelo menos 2 filtros.
 - [x] **Segurança**: Autenticação JWT + RBAC granular aplicado em todos os endpoints.
-- [/] **Regras de Negócio**: 10 necessárias. ~4 implementadas (bloqueio de exclusão de Arcs, Bulk atômico).
+- [x] **Regras de Negócio**: 10 necessárias. 8 implementadas (ver seção abaixo).
 - [x] **Persistência**: Migrations implementadas. Seeds básicos de Profiles/Permissions existentes.
 
 ---
 
-## 🗺️ Roadmap Global (TODO List)
+## 🧠 Regras de Negócio Complexas (Contrato de Domínio)
 
-### Fase 1: Fundação & Segurança ✅ Concluída
-- [x] **Configuração CQRS**: Setup do `@nestjs/cqrs` e organização da pasta `src/shared`.
-- [x] **Módulo de RBAC (CQRS)**:
-    - [x] CRUD de `PROFILES` (Commands/Queries).
-    - [x] CRUD de `PERMISSIONS` (Commands/Queries).
-    - [x] Gerenciamento de `PROFILE_PERMISSIONS` (`POST /profiles/:id/permissions`).
-- [x] **Autenticação**:
-    - [x] Login de `USERS` com JWT.
-    - [x] Guards `JwtAuthGuard` e `PermissionsGuard`.
-    - [x] Suporte a `IGNORE_PERMISSIONS=true` no `.env` para testes.
-- [x] **Proteção de Dados**:
-    - [x] `password_hash` excluído por padrão via `defaultScope` no modelo `User`.
-    - [x] `@RequirePermissions` aplicado em todos os 52 endpoints da API.
+Essas regras vão além de simples validações de campo — envolvem lógica de domínio entre entidades e garantem a consistência do universo One Piece na API.
 
-### Fase 2: Núcleo Geográfico & Conteúdo ✅ Concluída (CRUD)
-- [x] **CRUD de Sagas, Arcos, Ilhas, Eventos**.
-- [x] **CRUD de Personagens, Versões, Vínculos Ilha-Personagem**.
-- [x] Filtros e paginação em todos os módulos.
-- [ ] **Regras de Negócio Complexas** (Em andamento — ver `docs/obsidian-vault/Trabalho-P1-Requisitos.md`).
+### 1. Integridade de Localização
 
-### Fase 3: Interatividade & Gamificação 🔮 Futura
-- [ ] Sistema de Quizzes e lógica de pontuação.
-- [ ] Exploração de ilhas baseada em progresso.
+- **RN01 — Exclusão Protegida** ✅ Implementada
+  - Não é permitido excluir uma `Saga` com `Arcos`, nem um `Arco` com `Ilhas`, nem uma `Ilha` com `Eventos` ou `Personagens`.
+  - Implementada em: `delete-saga.handler.ts`, `delete-arc.handler.ts`, `delete-island.handler.ts`
 
-### Fase 4: Polimento & Entrega
-- [ ] Fechar os 8 endpoints restantes (meta: 60).
-- [ ] Completar as 10 regras de negócio complexas.
-- [ ] Expandir Seeds com dados temáticos de One Piece.
-- [ ] Entregar PDF com catálogo das regras de negócio.
+- **RN02 — Ordem Única de Arcos** ✅ Implementada
+  - Dentro de uma mesma Saga, não podem existir dois Arcos com o mesmo valor de `order`.
+  - Implementada em: `create-arc.handler.ts`
+
+- **RN03 — Ordem Única de Eventos** ✅ Implementada
+  - Dentro de uma mesma Ilha, não podem existir dois Eventos com o mesmo valor de `order`.
+  - Implementada em: `create-event.handler.ts`
+
+### 2. Consistência de Personagens
+
+- **RN04 — Unicidade de Versão por Arco** ✅ Implementada
+  - Um personagem pode ter várias versões, mas apenas **uma versão pode estar vinculada a ilhas de um mesmo Arco**.
+  - Implementada em: `add-character-to-island.handler.ts`
+
+- **RN05 — Cronologia de Versões** ✅ Implementada
+  - Uma versão de personagem de um Arco futuro (`arc.order` maior) não pode ser vinculada a uma Ilha de um Arco passado (`arc.order` menor).
+  - Exemplo: "Luffy Pós-Timeskip" não pode aparecer numa ilha do East Blue.
+  - Implementada em: `add-character-to-island.handler.ts`
+
+- **RN06 — Bulk Create Atômico** ✅ Implementada
+  - Criações em lote de personagens validam a unicidade de `slug` antes de qualquer inserção. Se um falhar, nenhum é criado.
+  - Implementada em: `create-characters-bulk.handler.ts`
+
+### 3. Segurança e Acesso
+
+- **RN07 — Bypass de Desenvolvimento** ✅ Implementada
+  - `IGNORE_PERMISSIONS=true` no `.env` desativa a checagem de RBAC para facilitar testes locais.
+  - Implementada em: `permissions.guard.ts`
+
+- **RN08 — Proteção de Admin** 🔲 Pendente
+  - O sistema deve impedir a remoção de permissões vitais do perfil `ADMIN`, evitando lockout.
+  - A implementar em: handler de gerenciamento de permissões de perfil.
 
 ---
 
 ## 🔐 Sistema de Permissões (RBAC)
-
-Todos os endpoints da API exigem um token JWT válido + permissão correspondente. O mapeamento de slugs é:
 
 | Módulo | `.view` | `.create` | `.update` | `.delete` |
 |---|---|---|---|---|
@@ -98,8 +107,11 @@ Todos os endpoints da API exigem um token JWT válido + permissão correspondent
 | `profiles` | ADMIN | ADMIN | ADMIN | ADMIN |
 | `permissions` | ADMIN | ADMIN | ADMIN | ADMIN |
 
-> **Bypass de teste:** Defina `IGNORE_PERMISSIONS=true` no `.env` e reinicie o servidor. O Guard libera todas as rotas sem checagem de banco.
+> **Bypass de teste:** Defina `IGNORE_PERMISSIONS=true` no `.env` e reinicie o servidor.
 
+---
+
+## 📊 Diagrama de Entidade-Relacionamento (ERD)
 
 > [!NOTE]
 > **Modelo de Auditoria e Soft Delete**: Para manter o diagrama visualmente limpo, as colunas de controle (`id`, `createdAt`, `updatedAt` e `deletedAt`) foram omitidas ou simplificadas. No entanto, todas as entidades principais do sistema implementam obrigatoriamente esse quarteto de campos para garantir rastreabilidade total e suporte ao **Soft Delete** nativo do Sequelize.
@@ -156,12 +168,14 @@ erDiagram
     characters {
         int id PK
         varchar name
-        varchar epithet
+        varchar slug
     }
     character_versions {
         int id PK
         int character_id FK
         int arc_id FK
+        varchar alias
+        varchar epithet
         bigint bounty
         varchar status
         varchar image_url
@@ -208,19 +222,17 @@ erDiagram
     - [x] Implementação de **Guards** baseados em Roles e Permissions.
     - [x] Integração com JWT (ESM compatible).
 
-### Fase 2: Núcleo Geográfico & Conteúdo
-- [ ] **CRUD de Regiões e Ilhas**: Listagem com filtros de clima e região.
-- [ ] **Enciclopédia**: Implementação de Sagas, Arcos e Personagens.
-- [ ] **Sistema de Akuma no Mi**: Regra de negócio: apenas um usuário por fruto.
+### Fase 2: Núcleo Geográfico & Conteúdo ✅ Concluída (CRUD)
+- [x] **CRUD de Sagas, Arcos, Ilhas, Eventos, Personagens e Versões**.
+- [x] **Filtros e Paginação** em todas as listagens.
+- [x] **Soft Delete** (`paranoid: true`) nos modelos principais.
+- [x] **Regras de Negócio** (7 de 8 implementadas): bloqueios de exclusão, unicidade de ordem, cronologia de versões, bulk atômico.
 
-### Fase 3: Interatividade & Gamificação
-- [ ] **Sistema de Exploração**: Desbloqueio de ilhas baseado em quizzes.
-- [ ] **Quizzes & Respostas**: Implementação de lógica de pontuação.
-
-### Fase 4: Polimento & Entrega
-- [ ] **Swagger**: Documentação exaustiva de todos os endpoints.
-- [ ] **Performance**: Implementação de Cache em endpoints de listagem de ilhas/personagens.
-- [ ] **Business Rules**: Refinamento das 10 regras de negócio complexas em PDF.
+### Fase 3: Polimento & Entrega 🚀 Em Andamento
+- [ ] **Finalizar Regras de Negócio**: Implementar RN08 (Proteção de Admin).
+- [ ] **Meta de Endpoints**: Fechar os ~8 endpoints restantes para atingir 60.
+- [ ] **Seeds Reais**: Povoar o banco com dados temáticos de One Piece.
+- [ ] **Entrega**: PDF com catálogo das regras de negócio.
 
 ---
 

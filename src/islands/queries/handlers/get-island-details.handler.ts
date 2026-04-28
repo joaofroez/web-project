@@ -1,6 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/sequelize';
 import { NotFoundException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 
 import { GetIslandDetailsQuery } from '../impl/get-island-details.query';
 
@@ -9,6 +10,7 @@ import { Arc } from '../../../arcs/models/arc.model';
 import { CharacterVersion } from '../../../character-versions/models/character-version.model';
 import { Character } from '../../../characters/models/character.model';
 import { Event } from '../../../events/models/event.model';
+import { IslandCharacterVersion } from 'src/island-character-versions/models/island-character-version.model';
 
 @QueryHandler(GetIslandDetailsQuery)
 export class GetIslandDetailsHandler
@@ -20,41 +22,79 @@ export class GetIslandDetailsHandler
   ) {}
 
   async execute(query: GetIslandDetailsQuery) {
-    const { id } = query;
+    const { islandId, arcId } = query;
 
-    const island = await this.islandModel.findByPk(id, {
-        include: [
+    if (!arcId) {
+      throw new BadRequestException('arc_id é obrigatório');
+    }
+
+    const island: any = await this.islandModel.findByPk(islandId, {
+      include: [
+        {
+          model: Arc,
+          attributes: ['id', 'name'],
+        },
+        {
+          model: IslandCharacterVersion,
+          include: [
             {
-            model: Arc,
-            attributes: ['id', 'name'],
-            },
-            {
-            model: CharacterVersion,
-            attributes: ['id', 'alias', 'epithet', 'image_url', 'bounty', 'status'],
-            include: [
+              model: CharacterVersion,
+              include: [
                 {
-                model: Character,
-                attributes: ['id', 'name'],
+                  model: Arc,
                 },
-            ],
+                {
+                  model: Character,
+                  attributes: ['id', 'name'],
+                },
+              ],
             },
-            {
-            model: Event,
-            attributes: ['id', 'title', 'description', 'order'],
-            },
-        ],
+          ],
+        },
+        {
+          model: Event,
+          attributes: ['id', 'title', 'description', 'order'],
+        },
+      ],
     });
 
+    const hasArc = island.arcs?.some(a => a.id === arcId);
+
+    if (!hasArc) {
+      throw new BadRequestException('Este arco não pertence à ilha');
+    }
+    
     if (!island || island.is_active === false) {
       throw new NotFoundException('Island não encontrada');
     }
+
+    const characters = (island.island_character_versions || [])
+      .filter((icv: any) =>
+        icv.characterVersion?.arcs?.some((a: any) => a.id === arcId),
+      )
+      .map((icv: any) => ({
+        id: icv.characterVersion.id,
+        name:
+          icv.characterVersion.alias ||
+          icv.characterVersion.character?.name,
+        epithet: icv.characterVersion.epithet,
+        image: icv.characterVersion.image_url,
+        bounty: icv.characterVersion.bounty,
+        status: icv.characterVersion.status,
+      }));
+
+    const events = (island.events || [])
+      .sort((a, b) => a.order - b.order)
+      .map((e) => ({
+        id: e.id,
+        title: e.title,
+        description: e.description,
+      }));
 
     return {
       id: island.id,
       name: island.name,
       description: island.description,
-      model_url: island.model_url,
-      thumbnail_url: island.thumbnail_url,
 
       coordinates: {
         x: island.coordinate_x,
@@ -62,26 +102,12 @@ export class GetIslandDetailsHandler
         z: island.coordinate_z,
       },
 
-      arcs: island.arcs?.map(a => ({ id: a.id, name: a.name })) ?? [],
+      arc: {
+        id: arcId,
+      },
 
-      characters:
-        island.character_versions?.map((cv) => ({
-          id: cv.character?.id,
-          name: cv.alias || cv.character?.name,
-          epithet: cv.epithet,
-          image: cv.image_url,
-          bounty: cv.bounty,
-          status: cv.status,
-        })) ?? [],
-
-      events:
-        island.events
-            ?.sort((a, b) => a.order - b.order)
-            .map((e) => ({
-                id: e.id,
-                title: e.title,
-                description: e.description,
-            })) ?? [],
-        };
+      characters,
+      events,
+    };
   }
 }

@@ -12,6 +12,8 @@ import { DeleteIslandCommand } from './commands/impl/delete-island.command';
 
 import { GetIslandDetailsQuery } from './queries/impl/get-island-details.query';
 import { GetIslandsQuery } from './queries/impl/get-islands.query';
+import { GetIslandArcsQuery } from './queries/impl/get-island-arcs.query';
+import { GetIslandsMapQuery } from './queries/impl/get-islands-map.query';
 
 @Injectable()
 export class IslandsService {
@@ -44,7 +46,7 @@ export class IslandsService {
     );
   }
 
-  // LIST
+  // LIST (MAP / FILTER)
   async findAll(query: FilterIslandDto) {
     return this.queryBus.execute(
       new GetIslandsQuery(
@@ -56,10 +58,22 @@ export class IslandsService {
     );
   }
 
-  // DETAILS
-  async findDetails(id: number) {
+  // MAPA
+  async getMap() {
+    return this.queryBus.execute(new GetIslandsMapQuery());
+  }
+
+  // ARCOS DA ILHA
+  async getArcs(islandId: number) {
     return this.queryBus.execute(
-      new GetIslandDetailsQuery(id),
+      new GetIslandArcsQuery(islandId),
+    );
+  }
+
+  // DETAILS
+  async findDetails(id: number, arcId: number) {
+    return this.queryBus.execute(
+      new GetIslandDetailsQuery(id, arcId),
     );
   }
 

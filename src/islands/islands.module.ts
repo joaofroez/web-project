@@ -19,17 +19,22 @@ import { DeleteIslandHandler } from './commands/handlers/delete-island.handler';
 
 import { GetIslandDetailsHandler } from './queries/handlers/get-island-details.handler';
 import { GetIslandsHandler } from './queries/handlers/get-islands.handler';
+import { GetIslandArcsHandler } from './queries/handlers/get-island-arcs.handler';
+import { GetIslandsMapHandler } from './queries/handlers/get-islands-map.handler';
+
 
 const CommandHandlers = [
   CreateIslandHandler,
   CreateIslandsBulkHandler,
   UpdateIslandHandler,
-  DeleteIslandHandler,  
+  DeleteIslandHandler, 
 ];
 
 const QueryHandlers = [
   GetIslandDetailsHandler,
   GetIslandsHandler,
+  GetIslandArcsHandler,
+  GetIslandsMapHandler,
 ];
 
 @Module({

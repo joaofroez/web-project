@@ -9,6 +9,7 @@ import {
   Query,
   ParseIntPipe,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -30,24 +31,7 @@ import { FilterIslandDto } from './dtos/filter-island.dto';
 @ApiResponse({ status: 403, description: 'Proibido (Falta de permissão).' })
 export class IslandsController {
   constructor(private readonly islandsService: IslandsService) {}
-
-  @ApiOperation({ summary: 'Criar uma nova ilha no mapa' })
-  @ApiResponse({ status: 201, description: 'Ilha criada com sucesso.' })
-  @RequirePermissions('islands.create')
-  @Post()
-  create(@Body() dto: CreateIslandDto) {
-    return this.islandsService.create(dto);
-  }
-
-  @ApiOperation({ summary: 'Criar múltiplas ilhas em lote' })
-  @ApiBody({ type: [CreateIslandDto] })
-  @ApiResponse({ status: 201, description: 'Ilhas criadas com sucesso.' })
-  @RequirePermissions('islands.create')
-  @Post('bulk')
-  createBulk(@Body() dtos: CreateIslandDto[]) {
-    return this.islandsService.createBulk(dtos);
-  }
-
+  
   @ApiOperation({ summary: 'Listar ilhas com filtros e paginação' })
   @ApiResponse({ status: 200, description: 'Lista de ilhas retornada com sucesso.' })
   @RequirePermissions('islands.view')
@@ -55,14 +39,54 @@ export class IslandsController {
   findAll(@Query() query: FilterIslandDto) {
     return this.islandsService.findAll(query);
   }
+  @ApiOperation({ summary: 'Criar uma nova ilha no mapa' })
+  @ApiResponse({ status: 201, description: 'Ilha criada com sucesso.' })
+  @RequirePermissions('islands.create')
+  @Post()
+  create(@Body() dto: CreateIslandDto) {
+    return this.islandsService.create(dto);
+  }
+  
+  @ApiOperation({ summary: 'Obter mapa completo das ilhas' })
+  @ApiResponse({ status: 200, description: 'Mapa de ilhas retornado com sucesso.' })
+  @RequirePermissions('islands.view')
+  @Get('map')
+  getMap() {
+    return this.islandsService.getMap();
+  }
 
-  @ApiOperation({ summary: 'Obter detalhes completos de uma ilha específica' })
-  @ApiResponse({ status: 200, description: 'Detalhes da ilha encontrados.' })
+  @ApiOperation({ summary: 'Obter arcos de uma ilha específica' })
+  @ApiResponse({ status: 200, description: 'Arcos da ilha retornados com sucesso.' })
   @ApiResponse({ status: 404, description: 'Ilha não encontrada.' })
   @RequirePermissions('islands.view')
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.islandsService.findDetails(id);
+  @Get(':id/arcs')
+  getArcs(@Param('id', ParseIntPipe) id: number) {
+    return this.islandsService.getArcs(id);
+  }
+  
+  @ApiOperation({ summary: 'Obter detalhes de uma ilha em um arco específico' })
+  @ApiResponse({ status: 200, description: 'Detalhes da ilha retornados com sucesso.' })
+  @ApiResponse({ status: 400, description: 'arc_id é obrigatório.' })
+  @ApiResponse({ status: 404, description: 'Ilha não encontrada.' })
+  @RequirePermissions('islands.view')
+  @Get(':id/details')
+  findDetails(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('arc_id') arcId: number,
+  ) {
+    if (!arcId) {
+      throw new BadRequestException('arc_id é obrigatório');
+    }
+
+    return this.islandsService.findDetails(id, Number(arcId));
+  }
+  @ApiOperation({ summary: 'Criar múltiplas ilhas em lote' })
+  @ApiBody({ type: [CreateIslandDto] })
+  @ApiResponse({ status: 201, description: 'Ilhas criadas com sucesso.' })
+  @RequirePermissions('islands.create')
+  @Post('bulk')
+  createBulk(@Body() dtos: CreateIslandDto[]) {
+    return this.islandsService.createBulk(dtos);
   }
 
   @ApiOperation({ summary: 'Atualizar os dados de uma ilha existente' })

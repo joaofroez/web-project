@@ -59,7 +59,9 @@
         { "name": "GET /islands", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/islands", "host": ["{{baseUrl}}"], "path": ["islands"] } } },
         { "name": "POST /islands", "request": { "method": "POST", "body": { "mode": "raw", "raw": "{\"name\": \"Dawn\", \"arc_ids\": [1], \"coordinate_x\": 0, \"coordinate_y\": 0, \"coordinate_z\": 0, \"model_url\": \"url\"}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/islands", "host": ["{{baseUrl}}"], "path": ["islands"] } } },
         { "name": "POST /islands/bulk", "request": { "method": "POST", "body": { "mode": "raw", "raw": "[{\"name\": \"Bulk Island\", \"arc_ids\": [1], \"coordinate_x\": 0, \"coordinate_y\": 0, \"coordinate_z\": 0, \"model_url\": \"url\"}]", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/islands/bulk", "host": ["{{baseUrl}}"], "path": ["islands", "bulk"] } } },
-        { "name": "GET /islands/:id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/islands/1", "host": ["{{baseUrl}}"], "path": ["islands", "1"] } } },
+        { "name": "GET /islands/map", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/islands/map", "host": ["{{baseUrl}}"], "path": ["islands", "map"] } } },
+        { "name": "GET /islands/:id/arcs", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/islands/1/arcs", "host": ["{{baseUrl}}"], "path": ["islands", "1", "arcs"] } } },
+        { "name": "GET /islands/:islandId/:arcId", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/islands/1/1", "host": ["{{baseUrl}}"], "path": ["islands", "1", "1"] } } },
         { "name": "PATCH /islands/:id", "request": { "method": "PATCH", "body": { "mode": "raw", "raw": "{\"name\": \"Updated Island\"}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/islands/1", "host": ["{{baseUrl}}"], "path": ["islands", "1"] } } },
         { "name": "DELETE /islands/:id", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/islands/1", "host": ["{{baseUrl}}"], "path": ["islands", "1"] } } }
       ]

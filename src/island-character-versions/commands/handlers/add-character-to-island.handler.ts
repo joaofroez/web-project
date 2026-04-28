@@ -47,11 +47,15 @@ export class AddCharacterToIslandHandler implements ICommandHandler<AddCharacter
       );
     }
 
+    // RN05: ao vincular personagem à ilha, é necessário indicar em qual arco de contexto isso ocorre
+    // Se apenas 1 arco em comum, usar esse. Se múltiplos, usar o primeiro (menor ID)
+    const arc_id = Math.min(...commonArcIds);
+
     try {
-      return await this.pivotModel.create({ character_version_id, island_id, order });
+      return await this.pivotModel.create({ character_version_id, island_id, arc_id, order });
     } catch (error) {
       if (error instanceof UniqueConstraintError) {
-        throw new ConflictException('Esta versão do personagem já está vinculada a esta ilha.');
+        throw new ConflictException('Esta versão do personagem já está vinculada a esta ilha neste arco e ordem.');
       }
       throw error;
     }

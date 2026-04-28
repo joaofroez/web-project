@@ -1,3 +1,6 @@
 export class GetIslandDetailsQuery {
-  constructor(public readonly id: number) {}
+  constructor(
+    public readonly islandId: number,
+    public readonly arcId: number,
+  ) {}
 }

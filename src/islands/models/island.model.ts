@@ -74,4 +74,7 @@ export class Island extends Model<
 
   @HasMany(() => Event)
   events!: Event[];
+
+  @HasMany(() => IslandCharacterVersion)
+  island_character_versions!: IslandCharacterVersion[];
 }

@@ -11,6 +11,7 @@ import {
 } from 'sequelize-typescript';
 import { CharacterVersion } from '../../character-versions/models/character-version.model';
 import { Island } from '../../islands/models/island.model';
+import { Arc } from '../../arcs/models/arc.model';
 
 @Table({ tableName: 'island_character_versions', timestamps: true, paranoid: true })
 export class IslandCharacterVersion extends Model {
@@ -23,6 +24,14 @@ export class IslandCharacterVersion extends Model {
 
   @BelongsTo(() => Island)
   island!: Island;
+
+  @ForeignKey(() => Arc)
+  @AllowNull(false)
+  @Column(DataType.INTEGER)
+  arc_id!: number;
+
+  @BelongsTo(() => Arc)
+  arc!: Arc;
 
   @ForeignKey(() => CharacterVersion)
   @AllowNull(false)

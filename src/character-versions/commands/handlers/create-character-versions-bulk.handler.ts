@@ -65,7 +65,8 @@ export class CreateCharacterVersionsBulkHandler implements ICommandHandler<Creat
           const pivots = dto.arc_ids.map(arc_id => ({
             arc_id,
             character_version_id: version.id,
-            order: 0 // ordem não é crítica para versões na pivot de arcos
+            character_id: dto.character_id,
+            order: 0 // RN04: ordem de aparição do personagem no arco
           }));
           await this.pivotModel.bulkCreate(pivots, { transaction: t });
         }

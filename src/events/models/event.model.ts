@@ -11,6 +11,7 @@ import {
   BelongsToMany,
 } from 'sequelize-typescript';
 import { Island } from '../../islands/models/island.model';
+import { Arc } from '../../arcs/models/arc.model';
 import { CharacterVersion } from '../../character-versions/models/character-version.model';
 import { EventParticipant } from './event-participant.model';
 
@@ -25,6 +26,14 @@ export class Event extends Model {
 
   @BelongsTo(() => Island)
   island!: Island;
+
+  @ForeignKey(() => Arc)
+  @AllowNull(false)
+  @Column(DataType.INTEGER)
+  arc_id!: number;
+
+  @BelongsTo(() => Arc)
+  arc!: Arc;
 
   @AllowNull(false)
   @Column(DataType.STRING)

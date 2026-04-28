@@ -4,9 +4,11 @@ import {
   Model,
   DataType,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 
 import { Arc } from './arc.model';
+import { Character } from '../../characters/models/character.model';
 import { CharacterVersion } from '../../character-versions/models/character-version.model';
 
 @Table({
@@ -28,6 +30,19 @@ export class ArcCharacterVersion extends Model {
     allowNull: false,
   })
   character_version_id!: number;
+
+  @BelongsTo(() => CharacterVersion)
+  characterVersion!: CharacterVersion;
+
+  @ForeignKey(() => Character)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  character_id!: number;
+
+  @BelongsTo(() => Character)
+  character!: Character;
 
   @Column({
     type: DataType.INTEGER,

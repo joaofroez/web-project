@@ -49,6 +49,7 @@ export class UpdateCharacterVersionHandler implements ICommandHandler<UpdateChar
           const pivots = arc_ids.map(arc_id => ({
             arc_id,
             character_version_id: id,
+            character_id: character_id ?? version.character_id,
             order: 0
           }));
           await this.pivotModel.bulkCreate(pivots, { transaction: t });

@@ -41,7 +41,9 @@ export class CreateCharacterVersionHandler implements ICommandHandler<CreateChar
       if (arc_ids && arc_ids.length > 0) {
         const pivots = arc_ids.map(arc_id => ({
           arc_id,
-          character_version_id: version.id
+          character_version_id: version.id,
+          character_id,
+          order: 0,
         }));
         await this.pivotModel.bulkCreate(pivots, { transaction: t });
       }

@@ -16,7 +16,7 @@ export class CreateEventHandler implements ICommandHandler<CreateEventCommand> {
   ) {}
 
   async execute(command: CreateEventCommand): Promise<Event> {
-    const { island_id, title, type, description, order } = command;
+    const { island_id, title, type, description, arc_id: providedArcId, order } = command;
     
     // ilha deve existir e trazer seus arcos associados
     const island: any = await this.islandModel.findByPk(island_id, {
@@ -35,8 +35,21 @@ export class CreateEventHandler implements ICommandHandler<CreateEventCommand> {
       );
     }
 
-    // se apenas 1 arco, usar esse. Se múltiplos, usar o de menor ID
-    const arc_id = Math.min(...arcIds);
+    // arc_id é obrigatório
+    if (!providedArcId) {
+      throw new ConflictException(
+        `O arc_id é obrigatório. Nenhum arco foi fornecido para o evento na ilha ${island_id}.`,
+      );
+    }
+
+    // validar que pertence à ilha
+    if (!arcIds.includes(providedArcId)) {
+      throw new ConflictException(
+        `O arco com ID ${providedArcId} não está associado à ilha ${island_id}. Arcos disponíveis: [${arcIds.join(', ')}].`,
+      );
+    }
+    
+    const arc_id = providedArcId;
 
     // impede duplicidade de ordem na mesma ilha
     const existing = await this.eventModel.findOne({

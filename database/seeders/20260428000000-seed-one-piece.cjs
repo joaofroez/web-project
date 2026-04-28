@@ -443,6 +443,76 @@ module.exports = {
       },
     ], { returning: true });
 
+    // 10. Create Events
+    await queryInterface.bulkInsert('events', [
+      {
+        island_id: 1,
+        arc_id: 1,
+        title: 'Encontro com Coby',
+        type: 'Recrutamento',
+        description: 'Luffy recruta Coby enquanto invade a base da Marinha',
+        order: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+      {
+        island_id: 2,
+        arc_id: 2,
+        title: 'Recrutamento de Nami',
+        type: 'Recrutamento',
+        description: 'Nami se junta ao crew após Luffy a salvar',
+        order: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+      {
+        island_id: 3,
+        arc_id: 3,
+        title: 'Execução de Gol D. Roger',
+        type: 'Histórico',
+        description: 'Local onde foi executado o Rei dos Piratas',
+        order: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+      {
+        island_id: 3,
+        arc_id: 3,
+        title: 'Recrutamento de Sanji',
+        type: 'Recrutamento',
+        description: 'Sanji se junta ao crew em Loguetown',
+        order: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+      {
+        island_id: 4,
+        arc_id: 4,
+        title: 'Batalha contra Crocodile',
+        type: 'Batalha',
+        description: 'Enfrentamento épico contra o Warlord Crocodile',
+        order: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+      {
+        island_id: 5,
+        arc_id: 5,
+        title: 'Chegada em Skypiea',
+        type: 'Exploração',
+        description: 'O crew chega à misteriosa ilha celestial',
+        order: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      },
+    ], { returning: true });
+
     console.log('✅ One Piece seed data inserted successfully!');
   },
 

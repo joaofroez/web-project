@@ -11,7 +11,7 @@ import {
   UseGuards,
   BadRequestException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
 import { RequirePermissions } from '../common/decorators/require-permissions.decorator';
@@ -47,7 +47,7 @@ export class IslandsController {
     return this.islandsService.create(dto);
   }
   
-  @ApiOperation({ summary: 'Obter mapa completo das ilhas' })
+  @ApiOperation({ summary: 'Obter mapa completo das ilhas', description: 'Retorna uma lista otimizada com coordenadas 3D para renderização.' })
   @ApiResponse({ status: 200, description: 'Mapa de ilhas retornado com sucesso.' })
   @RequirePermissions('islands.view')
   @Get('map')
@@ -55,7 +55,8 @@ export class IslandsController {
     return this.islandsService.getMap();
   }
 
-  @ApiOperation({ summary: 'Obter arcos de uma ilha específica' })
+  @ApiOperation({ summary: 'Obter arcos de uma ilha específica', description: 'Lista todos os arcos temporais vinculados a esta ilha.' })
+  @ApiParam({ name: 'id', description: 'ID numérico da ilha', type: 'integer' })
   @ApiResponse({ status: 200, description: 'Arcos da ilha retornados com sucesso.' })
   @ApiResponse({ status: 404, description: 'Ilha não encontrada.' })
   @RequirePermissions('islands.view')
@@ -64,9 +65,11 @@ export class IslandsController {
     return this.islandsService.getArcs(id);
   }
   
-  @ApiOperation({ summary: 'Obter detalhes de uma ilha em um arco específico' })
+  @ApiOperation({ summary: 'Obter detalhes cronológicos de uma ilha', description: 'Retorna a ilha filtrada por um arco, garantindo precisão temporal dos personagens.' })
+  @ApiParam({ name: 'id', description: 'ID numérico da ilha', type: 'integer' })
+  @ApiQuery({ name: 'arc_id', description: 'Filtro obrigatório do arco temporal', type: 'integer', required: true })
   @ApiResponse({ status: 200, description: 'Detalhes da ilha retornados com sucesso.' })
-  @ApiResponse({ status: 400, description: 'arc_id é obrigatório.' })
+  @ApiResponse({ status: 400, description: 'O parâmetro arc_id é obrigatório.' })
   @ApiResponse({ status: 404, description: 'Ilha não encontrada.' })
   @RequirePermissions('islands.view')
   @Get(':id/details')

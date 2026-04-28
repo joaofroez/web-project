@@ -25,6 +25,11 @@ export class UpdateProfilePermissionsHandler implements ICommandHandler<UpdatePr
       throw new NotFoundException('Perfil não encontrado');
     }
 
+    if (profile.name === 'ADMIN' || profileId === 1) {
+      const { BadRequestException } = require('@nestjs/common');
+      throw new BadRequestException('As permissões do perfil ADMIN (mestre) não podem ser alteradas');
+    }
+
     return await this.sequelize.transaction(async (transaction) => {
       await this.profilePermissionModel.destroy({
         where: { profile_id: profileId },

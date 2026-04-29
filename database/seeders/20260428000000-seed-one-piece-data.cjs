@@ -69,15 +69,15 @@ module.exports = {
     // 8. Island_CharacterVersions (Vínculo da Ilha)
     await queryInterface.bulkInsert('island_character_versions', [
       { arc_id: 1, island_id: 1, character_version_id: 1, order: 1, createdAt: now, updatedAt: now },
-      { arc_id: 1, island_id: 2, character_version_id: 1, order: 2, createdAt: now, updatedAt: now },
-      { arc_id: 2, island_id: 3, character_version_id: 1, order: 3, createdAt: now, updatedAt: now },
-      { arc_id: 3, island_id: 4, character_version_id: 1, order: 4, createdAt: now, updatedAt: now },
       { arc_id: 2, island_id: 3, character_version_id: 2, order: 1, createdAt: now, updatedAt: now },
       { arc_id: 3, island_id: 4, character_version_id: 3, order: 1, createdAt: now, updatedAt: now },
-      { arc_id: 3, island_id: 4, character_version_id: 4, order: 1, createdAt: now, updatedAt: now },
+      { arc_id: 3, island_id: 4, character_version_id: 4, order: 2, createdAt: now, updatedAt: now },
       { arc_id: 1, island_id: 2, character_version_id: 5, order: 1, createdAt: now, updatedAt: now },
-      { arc_id: 1, island_id: 2, character_version_id: 6, order: 1, createdAt: now, updatedAt: now },
-      { arc_id: 3, island_id: 4, character_version_id: 2, order: 2, createdAt: now, updatedAt: now }
+      { arc_id: 1, island_id: 2, character_version_id: 6, order: 2, createdAt: now, updatedAt: now },
+      { arc_id: 1, island_id: 2, character_version_id: 1, order: 3, createdAt: now, updatedAt: now },
+      { arc_id: 2, island_id: 3, character_version_id: 1, order: 2, createdAt: now, updatedAt: now },
+      { arc_id: 3, island_id: 4, character_version_id: 1, order: 3, createdAt: now, updatedAt: now },
+      { arc_id: 3, island_id: 4, character_version_id: 2, order: 4, createdAt: now, updatedAt: now }
     ]);
 
     // 9. Eventos

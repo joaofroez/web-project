@@ -1,0 +1,61 @@
+import { Column, DataType, Model, Table, BelongsToMany } from 'sequelize-typescript';
+import { CharacterVersionRead } from '../../character-versions/models/character-version-read.model';
+import { EventParticipantRead } from './event-participant-read.model';
+
+@Table({
+  tableName: 'event_reads',
+  timestamps: true,
+  paranoid: true,
+})
+export class EventRead extends Model {
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+  })
+  id!: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  island_id!: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  arc_id!: number;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  title!: string;
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  description?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  type!: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 0,
+    allowNull: false,
+  })
+  order!: number;
+
+  // Personagens (por versão) que participaram deste evento.
+  @BelongsToMany(() => CharacterVersionRead, {
+    through: () => EventParticipantRead,
+    foreignKey: 'event_id',
+    otherKey: 'character_version_id'
+  })
+  participants!: CharacterVersionRead[];
+}
